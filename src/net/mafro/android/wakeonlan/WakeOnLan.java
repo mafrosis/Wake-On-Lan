@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import android.content.Context;
 import android.content.UriMatcher;
+import android.content.ContentValues;
 
 import android.database.Cursor;
 
@@ -15,6 +16,8 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.EditText;
+import android.widget.Button;
 
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,6 +28,9 @@ import android.provider.BaseColumns;
 
 public class WakeOnLan extends TabActivity implements OnClickListener, OnTabChangeListener
 {
+
+	private static final String TAG = "WakeOnLan";
+	
 	private Cursor cursor;	//main history cursor
 
     private static final String[] PROJECTION = new String[]
@@ -51,10 +57,18 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnTabChan
 		th.setOnTabChangedListener(this);
 		th.setCurrentTab(0);
 		
-		//load history
+		//add listener for wake button
+		Button sendWake = (Button)findViewById(R.id.send_wake);
+		sendWake.setOnClickListener(this);
 		
-		// Perform a managed query. The Activity will handle closing and requerying the cursor when needed.
-		cursor = managedQuery(History.Items.CONTENT_URI, PROJECTION, null, null, History.Items.DEFAULT_SORT_ORDER);
+		//set defaults on Wake tab
+		EditText vip = (EditText)findViewById(R.id.ip);
+		EditText vport = (EditText)findViewById(R.id.port);
+		vip.setText(MagicPacket.BROADCAST);
+		vport.setText(Integer.toString(MagicPacket.PORT));
+		
+		//load History list
+		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, null);
 
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.history_row, cursor, new String[] { History.Items.MAC }, new int[] { R.id.history_row_mac });
 
@@ -74,20 +88,27 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnTabChan
 	public void onClick(View v)
 	{
 		if(v.getId() == R.id.send_wake) {
-			EditText vtitle = (ListView)findViewById(R.id.title);
-			EditText vmac = (ListView)findViewById(R.id.mac);
-			EditText vip = (ListView)findViewById(R.id.ip);
-			EditText vport = (ListView)findViewById(R.id.port);
+			EditText vtitle = (EditText)findViewById(R.id.title);
+			EditText vmac = (EditText)findViewById(R.id.mac);
+			EditText vip = (EditText)findViewById(R.id.ip);
+			EditText vport = (EditText)findViewById(R.id.port);
 			
-			String title = vtitle.getText().getString();
-			String mac = vmac.getText().getString();
-			String ip = vip.getText().getString();
-			int port = Integer.valueOf(vport.getText().getString());
+			String title = vtitle.getText().toString();
+			String mac = vmac.getText().toString();
+			String ip = vip.getText().toString();
+			int port = Integer.valueOf(vport.getText().toString());
 			
-			//send magic packet
-			MagicPacket.send(mac, ip, port);
+			Log.d(TAG, mac);
 			
-			addToHistory(title, mac, ip, port);
+			try {
+				//send magic packet
+				MagicPacket.send(mac, ip, port);
+				
+				addToHistory(title, mac, ip, port);
+				
+			}catch(Exception e) {
+				Log.e(TAG, "send", e);
+			}
 		}
 	}
 	
@@ -114,8 +135,12 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnTabChan
 			values.put(History.Items.MAC, mac);
 			values.put(History.Items.IP, ip);
 			values.put(History.Items.PORT, port);
+			
+			Log.d(TAG, "inserting "+title);
 
 			Uri uri = getContentResolver().insert(History.Items.CONTENT_URI, values);
+			
+			Log.d(TAG, uri.toString());
 		}
 	}
 	

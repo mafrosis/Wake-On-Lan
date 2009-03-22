@@ -1,43 +1,41 @@
 package net.mafro.android.wakeonlan;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.net.DatagramSocket;
+import java.net.DatagramPacket;
+import java.net.SocketException;
 
 public class MagicPacket
 {
+	public static final String BROADCAST = "192.168.1.255";
 	public static final int PORT = 9;
 	
-	public static void send(String ip, String mac) {
+	public static void send(String mac, String ip) throws UnknownHostException, SocketException, IOException {
 		send(ip, mac, PORT);
 	}
 
-	public static void send(String ip, String mac, int port) {
-		try {
-			byte[] macBytes = getMacBytes(mac);
-			byte[] bytes = new byte[102];
+	public static void send(String mac, String ip, int port) throws UnknownHostException, SocketException, IOException {
+		byte[] macBytes = getMacBytes(mac);
+		byte[] bytes = new byte[102];
 
-			//fill first 6 bytes
-			for (int i = 0; i < 6; i++) {
-				bytes[i] = (byte) 0xff;
-			}
-			//fill remaining bytes with target MAC
-			for (int i = 6; i < bytes.length; i += macBytes.length) {
-				System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
-			}
-
-			//create socket to IP
-			InetAddress address = InetAddress.getByName(ip);
-			DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, PORT);
-			DatagramSocket socket = new DatagramSocket();
-			socket.send(packet);
-			socket.close();
-
-			System.out.println("Wake-on-LAN packet sent.");
-
-		}catch (Exception e) {
-			System.out.println("Failed to send Wake-on-LAN packet: + e");
-			System.exit(1);
+		//fill first 6 bytes
+		for (int i = 0; i < 6; i++) {
+			bytes[i] = (byte) 0xff;
 		}
+		//fill remaining bytes with target MAC
+		for (int i = 6; i < bytes.length; i += macBytes.length) {
+			System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
+		}
+
+		//create socket to IP
+		InetAddress address = InetAddress.getByName(ip);
+		DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, PORT);
+		DatagramSocket socket = new DatagramSocket();
+		socket.send(packet);
+		socket.close();
 	}
 
 	private static byte[] getMacBytes(String mac) throws IllegalArgumentException {

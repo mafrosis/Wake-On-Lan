@@ -32,7 +32,12 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f040000;
         public static final int button_wake_en=0x7f040001;
+        public static final int ip_en=0x7f040006;
+        public static final int mac_en=0x7f040005;
+        public static final int port_en=0x7f040007;
         public static final int tab_history_en=0x7f040002;
         public static final int tab_wake_en=0x7f040003;
+        public static final int test_mac=0x7f040008;
+        public static final int title_en=0x7f040004;
     }
 }

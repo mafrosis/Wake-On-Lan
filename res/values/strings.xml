@@ -4,4 +4,9 @@
     <string name="button_wake_en">Send Packet</string>
     <string name="tab_history_en">History</string>
     <string name="tab_wake_en">Wake</string>
+    <string name="title_en">Reference</string>
+    <string name="mac_en">MAC Address</string>
+    <string name="ip_en">IP</string>
+    <string name="port_en">Port</string>
+    <string name="test_mac">00:18:f3:fd:9a:49</string>
 </resources>

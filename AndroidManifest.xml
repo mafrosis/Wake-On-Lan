@@ -3,6 +3,7 @@
       package="net.mafro.android.wakeonlan"
       android:versionCode="1"
       android:versionName="1.0">
+
     <application android:label="@string/app_name">
         <activity android:name=".WakeOnLan"
                   android:label="@string/app_name">
@@ -11,5 +12,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+		<provider android:name="HistoryProvider" 
+				  android:authorities="net.mafro.android.wakeonlan.historyprovider" />
     </application>
+
+	<uses-permission android:name="android.permission.INTERNET" />
 </manifest> 
