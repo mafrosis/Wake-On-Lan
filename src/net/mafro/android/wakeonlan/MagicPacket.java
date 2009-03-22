@@ -1,4 +1,4 @@
-package net.mafro.android;
+package net.mafro.android.wakeonlan;
 
 import java.io.*;
 import java.net.*;
@@ -6,8 +6,12 @@ import java.net.*;
 public class MagicPacket
 {
 	public static final int PORT = 9;
-
+	
 	public static void send(String ip, String mac) {
+		send(ip, mac, PORT);
+	}
+
+	public static void send(String ip, String mac, int port) {
 		try {
 			byte[] macBytes = getMacBytes(mac);
 			byte[] bytes = new byte[102];

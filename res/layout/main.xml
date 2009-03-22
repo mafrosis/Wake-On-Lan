@@ -1,13 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/tabhost"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="Hello World, WakeOnLan"
-    />
-</LinearLayout>
+    android:layout_height="fill_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            
+			<ListView 
+				android:id="@+id/history"
+		        android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1" />
+			
+			<LinearLayout
+				android:id="@+id/wakeview"
+				android:orientation="vertical"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent">
 
+				<EditText 
+					android:id="@+id/title"
+			        android:layout_width="fill_parent"
+					android:layout_height="wrap_content" />
+				<EditText 
+					android:id="@+id/mac"
+			        android:layout_width="fill_parent"
+					android:layout_height="wrap_content" />
+				<EditText 
+					android:id="@+id/ip"
+			        android:layout_width="fill_parent"
+					android:layout_height="wrap_content" />
+				<EditText 
+					android:id="@+id/port"
+			        android:layout_width="fill_parent"
+					android:layout_height="wrap_content" />
+					
+				<Button android:id="@+id/send_wake"
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content" 
+					android:layout_gravity="right"
+					android:text="@string/button_wake_en" />
+			</LinearLayout>
+			
+    	</FrameLayout>
+    </LinearLayout>
+</TabHost>

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WakeOnLan</string>
+    <string name="button_wake_en">Send Packet</string>
+    <string name="tab_history_en">History</string>
+    <string name="tab_wake_en">Wake</string>
 </resources>

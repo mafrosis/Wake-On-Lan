@@ -15,7 +15,7 @@
          Do not change them unless you really know what you are doing. -->
 
     <!-- Application Package Name -->
-    <property name="application-package" value="net.mafro.android" />
+    <property name="application-package" value="net.mafro.android.wakeonlan" />
 
     <!-- The intermediates directory, Eclipse uses "bin"
          for its own output, so we do the same. -->
