@@ -19,6 +19,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.Toast;
 
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -51,6 +52,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 		History.Items.IP,
 		History.Items.PORT
     };
+	
+	private static Toast notification;
+	
 
 	@Override
     public void onCreate(Bundle savedInstanceState)
@@ -113,12 +117,16 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 	
 	private boolean sendPacket(String mac, String ip, int port)
 	{
+		Log.i(TAG, mac+" "+ip+":"+Integer.toString(port));
+		
 		try {
 			MagicPacket.send(mac, ip, port);
 		}catch(Exception e) {
+			notifyUser("Sending Failed", WakeOnLan.this);
 			Log.e(TAG, "send", e);
 			return false;
 		}
+		notifyUser("Magic Packet sent", WakeOnLan.this);
 		return true;
 	}
 	
@@ -176,6 +184,16 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 			return true;
 		default:
 			return super.onContextItemSelected(item);
+		}
+	}
+
+	public static void notifyUser(String message, Context context) {
+		if (notification != null) {
+			notification.setText(message);
+			notification.show();
+		} else {
+			notification = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+			notification.show();
 		}
 	}
 
