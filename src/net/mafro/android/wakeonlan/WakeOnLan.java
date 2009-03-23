@@ -171,6 +171,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 	{
 		//extract data about clicked item
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		
 		//move bound cursor to item that was clicked
 		cursor.moveToPosition(info.position);
 		
@@ -180,7 +181,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 			sendPacket(cursor.getString(1), cursor.getString(2), cursor.getInt(3));
 			return true;
 		case R.id.menu_delete:
-			Log.i(TAG, "menu_delete");
+			//use HistoryProvider to remove this row
+			Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(cursor.getInt(0)));
+			getContentResolver().delete(itemUri, null, null);
 			return true;
 		default:
 			return super.onContextItemSelected(item);
