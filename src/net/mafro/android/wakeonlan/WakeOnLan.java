@@ -18,25 +18,38 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.EditText;
 import android.widget.Button;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import android.view.View;
 import android.view.View.OnClickListener;
+
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
 
 
-public class WakeOnLan extends TabActivity implements OnClickListener, OnTabChangeListener
+public class WakeOnLan extends TabActivity implements OnClickListener
 {
 
 	private static final String TAG = "WakeOnLan";
+	
+    public static final int MENU_ITEM_WAKE = Menu.FIRST;
+    public static final int MENU_ITEM_DELETE = Menu.FIRST + 1;
 	
 	private Cursor cursor;	//main history cursor
 
     private static final String[] PROJECTION = new String[]
 	{
-            History.Items._ID,
-            History.Items.MAC,
+		History.Items._ID,
+		History.Items.MAC,
+		History.Items.IP,
+		History.Items.PORT
     };
 
 	@Override
@@ -51,10 +64,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnTabChan
 		String tab_history = getString(R.string.tab_history_en);
 		String tab_wake = getString(R.string.tab_wake_en);
 
-		th.addTab(th.newTabSpec("tab_history").setIndicator(tab_history).setContent(R.id.history));
+		th.addTab(th.newTabSpec("tab_history").setIndicator(tab_history).setContent(R.id.historyview));
 		th.addTab(th.newTabSpec("tab_wake").setIndicator(tab_wake).setContent(R.id.wakeview));
 		
-		th.setOnTabChangedListener(this);
 		th.setCurrentTab(0);
 		
 		//add listener for wake button
@@ -70,21 +82,15 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnTabChan
 		//load History list
 		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, null);
 
-		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.history_row, cursor, new String[] { History.Items.MAC }, new int[] { R.id.history_row_mac });
+		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.history_row, cursor, new String[] { History.Items.MAC, History.Items.IP, History.Items.PORT }, new int[] { R.id.history_row_mac, R.id.history_row_ip, R.id.history_row_port });
 
-		ListView lv = (ListView)findViewById(R.id.history);
-		lv.setAdapter(adapter);
+		ListView lvHistory = (ListView)findViewById(R.id.history);
+		lvHistory.setAdapter(adapter);
+		
+		//set self as context menu listener
+		registerForContextMenu(lvHistory);
     }
 
-	public void onTabChanged(String tabId)
-	{
-		Log.i("---------------- TAB", tabId);
-
-		if(tabId.equals("tab_history")) {
-			//Log.i("---------------- LIST", Integer.toString(list.length));
-		}
-	}
-	
 	public void onClick(View v)
 	{
 		if(v.getId() == R.id.send_wake) {
@@ -98,22 +104,26 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnTabChan
 			String ip = vip.getText().toString();
 			int port = Integer.valueOf(vport.getText().toString());
 			
-			Log.d(TAG, mac);
-			
-			try {
-				//send magic packet
-				MagicPacket.send(mac, ip, port);
-				
+			if(sendPacket(mac, ip, port)) {
+				//on succesful send, add to history list
 				addToHistory(title, mac, ip, port);
-				
-			}catch(Exception e) {
-				Log.e(TAG, "send", e);
 			}
 		}
 	}
 	
+	private boolean sendPacket(String mac, String ip, int port)
+	{
+		try {
+			MagicPacket.send(mac, ip, port);
+		}catch(Exception e) {
+			Log.e(TAG, "send", e);
+			return false;
+		}
+		return true;
+	}
+	
 	private void addToHistory(String title, String mac, String ip, int port)
-	{	
+	{
 		boolean exists = false;
 		
 		//check mac doesnt already exist
@@ -135,13 +145,38 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnTabChan
 			values.put(History.Items.MAC, mac);
 			values.put(History.Items.IP, ip);
 			values.put(History.Items.PORT, port);
-			
-			Log.d(TAG, "inserting "+title);
-
 			Uri uri = getContentResolver().insert(History.Items.CONTENT_URI, values);
-			
-			Log.d(TAG, uri.toString());
 		}
 	}
-	
+
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
+	{
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.history_menu, menu);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item)
+	{
+		//extract data about clicked item
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		//move bound cursor to item that was clicked
+		cursor.moveToPosition(info.position);
+		
+		switch (item.getItemId()) {
+		case R.id.menu_wake:
+			//HACK hardcoded column indexes
+			sendPacket(cursor.getString(1), cursor.getString(2), cursor.getInt(3));
+			return true;
+		case R.id.menu_delete:
+			Log.i(TAG, "menu_delete");
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
+	}
+
 }
