@@ -14,39 +14,41 @@
         
         android:src="@drawable/icon" />
 
-    <LinearLayout
-        android:orientation="vertical"
-    
-        android:layout_width="0dip"
-        android:layout_weight="1"
+    <RelativeLayout
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent">
+
+		<TextView
+			android:id="@+id/history_row_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
 			android:id="@+id/history_row_mac"
             android:layout_width="fill_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-                    
-            android:gravity="center_vertical" />
+            android:layout_height="wrap_content"
+ 			android:layout_below="@id/history_row_title" />
             
         <TextView
 			android:id="@+id/history_row_ip"
             android:layout_width="wrap_content"
-            android:layout_height="0dip"
-            android:layout_weight="1" 
-            
-            android:singleLine="true"
-            android:ellipsize="marquee" />
+            android:layout_height="wrap_content"
+ 			android:layout_below="@id/history_row_mac" />
+		<TextView
+			android:id="@+id/history_row_colon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/history_row_ip"
+			android:layout_alignTop="@id/history_row_ip"
+			android:text=":" />
 		<TextView
 			android:id="@+id/history_row_port"
             android:layout_width="wrap_content"
-            android:layout_height="0dip"
-            android:layout_weight="1" 
-
-            android:singleLine="true"
-            android:ellipsize="marquee" />
+            android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/history_row_colon"
+			android:layout_alignTop="@id/history_row_ip" />
             
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
 

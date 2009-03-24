@@ -48,6 +48,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener
     private static final String[] PROJECTION = new String[]
 	{
 		History.Items._ID,
+		History.Items.TITLE,
 		History.Items.MAC,
 		History.Items.IP,
 		History.Items.PORT
@@ -86,7 +87,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 		//load History list
 		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, null);
 
-		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.history_row, cursor, new String[] { History.Items.MAC, History.Items.IP, History.Items.PORT }, new int[] { R.id.history_row_mac, R.id.history_row_ip, R.id.history_row_port });
+		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.history_row, cursor, new String[] { History.Items.TITLE, History.Items.MAC, History.Items.IP, History.Items.PORT }, new int[] { R.id.history_row_title, R.id.history_row_mac, R.id.history_row_ip, R.id.history_row_port });
 
 		ListView lvHistory = (ListView)findViewById(R.id.history);
 		lvHistory.setAdapter(adapter);
