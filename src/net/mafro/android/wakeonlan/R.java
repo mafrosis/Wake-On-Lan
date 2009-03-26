@@ -52,5 +52,6 @@ public final class R {
         public static final int tab_history_en=0x7f040003;
         public static final int tab_wake_en=0x7f040004;
         public static final int title_en=0x7f040005;
+        public static final int version_url=0x7f04000b;
     }
 }

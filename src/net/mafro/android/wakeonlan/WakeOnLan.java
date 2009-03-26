@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 import android.database.Cursor;
 
@@ -35,6 +37,11 @@ import android.net.Uri;
 import java.net.URISyntaxException;
 
 import android.provider.BaseColumns;
+
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
+import java.io.IOException;
 
 
 public class WakeOnLan extends TabActivity implements OnClickListener
@@ -93,8 +100,6 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 		
 		//set self as context menu listener
 		registerForContextMenu(lvHistory);
-
-		
     }
 
 	public void onClick(View v)
@@ -203,5 +208,42 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 			notification.show();
 		}
 	}
+
+
+	private void checkForUpdates() {
+		String url = getString(R.string.version_url)+getPackageName();
+
+		Log.i(TAG, url);
+
+		//retrieve current latest version number
+		HttpClient hc = new DefaultHttpClient();
+		HttpGet req = new HttpGet(url);
+		ResponseHandler<String> rh = new BasicResponseHandler();
+
+		String response = null;
+
+		try{
+			response = hc.execute(req, rh);
+		}catch(IOException ioe) {
+			return;
+		}
+
+		//if version numbers don't match then open Market application
+		if(!getVersionNumber().equals(response)) {
+			Intent market = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pname:"+getPackageName()));
+			startActivity(market);
+		}
+	}
+
+	private String getVersionNumber() {
+		String version = "?";
+		try {
+			PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
+			version = pi.versionName;
+		} catch (NameNotFoundException e) {
+			Log.e(TAG, "Package name not found", e);
+		};
+		return version;
+	} 
 
 }
