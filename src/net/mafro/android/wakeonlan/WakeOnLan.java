@@ -122,11 +122,13 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 		
 		try {
 			MagicPacket.send(mac, ip, port);
+			
 		}catch(Exception e) {
+			Log.e(TAG, "Sending Failed", e);
 			notifyUser("Sending Failed", WakeOnLan.this);
-			Log.e(TAG, "send", e);
 			return false;
 		}
+		
 		notifyUser("Magic Packet sent", WakeOnLan.this);
 		return true;
 	}
@@ -179,7 +181,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 		switch (item.getItemId()) {
 		case R.id.menu_wake:
 			//HACK hardcoded column indexes
-			sendPacket(cursor.getString(1), cursor.getString(2), cursor.getInt(3));
+			sendPacket(cursor.getString(2), cursor.getString(3), cursor.getInt(4));
 			return true;
 		case R.id.menu_delete:
 			//use HistoryProvider to remove this row
