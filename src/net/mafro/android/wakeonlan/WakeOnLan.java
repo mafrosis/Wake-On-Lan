@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.content.ContentValues;
+import android.content.Intent;
 
 import android.database.Cursor;
 
@@ -23,7 +24,6 @@ import android.widget.Toast;
 
 import android.view.View;
 import android.view.View.OnClickListener;
-
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +32,8 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
 
 import android.net.Uri;
+import java.net.URISyntaxException;
+
 import android.provider.BaseColumns;
 
 
@@ -65,12 +67,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 
 		//configure tabs
 		TabHost th = getTabHost();
-		
-		String tab_history = getString(R.string.tab_history_en);
-		String tab_wake = getString(R.string.tab_wake_en);
 
-		th.addTab(th.newTabSpec("tab_history").setIndicator(tab_history).setContent(R.id.historyview));
-		th.addTab(th.newTabSpec("tab_wake").setIndicator(tab_wake).setContent(R.id.wakeview));
+		th.addTab(th.newTabSpec("tab_history").setIndicator(getString(R.string.tab_history_en), getResources().getDrawable(R.drawable.ical)).setContent(R.id.historyview));
+		th.addTab(th.newTabSpec("tab_wake").setIndicator(getString(R.string.tab_wake_en), getResources().getDrawable(R.drawable.wake)).setContent(R.id.wakeview));
 		
 		th.setCurrentTab(0);
 		
@@ -94,6 +93,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 		
 		//set self as context menu listener
 		registerForContextMenu(lvHistory);
+
+		
     }
 
 	public void onClick(View v)
