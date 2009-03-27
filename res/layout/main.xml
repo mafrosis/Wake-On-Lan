@@ -31,54 +31,59 @@
 					android:layout_weight="1" />
 			</LinearLayout>
 			
-			<LinearLayout
-				android:id="@+id/wakeview"
-				android:orientation="vertical"
+			<ScrollView
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent">
-				
-				<TextView 
-			        android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/title_en" />
-				<EditText 
-					android:id="@+id/title"
-			        android:layout_width="fill_parent"
-					android:layout_height="wrap_content" />
+
+				<LinearLayout
+					android:id="@+id/wakeview"
+					android:orientation="vertical"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
 					
-				<TextView 
-			        android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/mac_en" />
-				<EditText 
-					android:id="@+id/mac"
-			        android:layout_width="fill_parent"
-					android:layout_height="wrap_content" />
-					
-				<TextView 
-			        android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/ip_en" />
-				<EditText 
-					android:id="@+id/ip"
-			        android:layout_width="fill_parent"
-					android:layout_height="wrap_content" />
-					
-				<TextView 
-			        android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/port_en" />
-				<EditText 
-					android:id="@+id/port"
-			        android:layout_width="fill_parent"
-					android:layout_height="wrap_content" />
-					
-				<Button android:id="@+id/send_wake"
-					android:layout_width="wrap_content" 
-					android:layout_height="wrap_content" 
-					android:layout_gravity="right"
-					android:text="@string/button_wake_en" />
-			</LinearLayout>
+					<TextView 
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/title_en" />
+					<EditText 
+						android:id="@+id/title"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content" />
+						
+					<TextView 
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/mac_en" />
+					<EditText 
+						android:id="@+id/mac"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content" />
+						
+					<TextView 
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/ip_en" />
+					<EditText 
+						android:id="@+id/ip"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content" />
+						
+					<TextView 
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/port_en" />
+					<EditText 
+						android:id="@+id/port"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content" />
+						
+					<Button android:id="@+id/send_wake"
+						android:layout_width="wrap_content" 
+						android:layout_height="wrap_content" 
+						android:layout_gravity="right"
+						android:text="@string/button_wake_en" />
+				</LinearLayout>
+			</ScrollView>
 
 		</FrameLayout>
 	</LinearLayout>
