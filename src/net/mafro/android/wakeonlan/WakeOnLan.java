@@ -5,13 +5,13 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 
 import android.content.Context;
 import android.content.UriMatcher;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.DialogInterface;
 
 import android.database.Cursor;
@@ -38,14 +38,8 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
 
 import android.net.Uri;
-import java.net.URISyntaxException;
 
 import android.provider.BaseColumns;
-
-import org.apache.http.client.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.*;
-import java.io.IOException;
 
 
 public class WakeOnLan extends TabActivity implements OnClickListener
@@ -76,8 +70,6 @@ public class WakeOnLan extends TabActivity implements OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-		checkForUpdates();
-
 		//configure tabs
 		TabHost th = getTabHost();
 
@@ -106,6 +98,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 		
 		//set self as context menu listener
 		registerForContextMenu(lvHistory);
+
+		//check for updates
+		Updater.checkForUpdates(this, handler);
     }
 
 	public void onClick(View v)
@@ -216,27 +211,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 	}
 
 
-	private void checkForUpdates() {
-		String url = getString(R.string.version_url)+getPackageName();
-
-		Log.i(TAG, url);
-
-		//retrieve current latest version number
-		HttpClient hc = new DefaultHttpClient();
-		HttpGet req = new HttpGet(url);
-		ResponseHandler<String> rh = new BasicResponseHandler();
-
-		String response = null;
-
-		try{
-			response = hc.execute(req, rh);
-		}catch(IOException ioe) {
-			return;
-		}
-
-		//compare version numbers
-		if(!getVersionNumber().equals(response)) {
-
+	private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
 			//prompt user for action
 			new AlertDialog.Builder(WakeOnLan.this)
 				.setTitle("Update Available")
@@ -254,17 +231,6 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 				public void onClick(DialogInterface dialog, int whichButton) {}
 			}).show();
 		}
-	}
-
-	private String getVersionNumber() {
-		String version = "?";
-		try {
-			PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
-			version = pi.versionName;
-		} catch (NameNotFoundException e) {
-			Log.e(TAG, "Package name not found", e);
-		};
-		return version;
-	}
+	};
 
 }
