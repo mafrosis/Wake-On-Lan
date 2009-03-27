@@ -12,6 +12,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 
 import java.lang.Thread;
+import java.lang.IllegalThreadStateException;
 
 import org.apache.http.client.*;
 import org.apache.http.client.methods.*;
@@ -26,7 +27,8 @@ public class Updater extends Thread
 
 	private Context context = null;
 	private Handler handler = null;
-	
+
+	private static boolean running = false;
 	private static Updater u = null;
 	private Updater(Context c, Handler h) {
 		context = c;
@@ -35,10 +37,16 @@ public class Updater extends Thread
 
 	public static void checkForUpdates(Context context, Handler handler) {
 		if(u == null) { u = new Updater(context, handler); }
-		u.start();
+		if(running == false) {
+			try{
+				u.start();
+			}catch(IllegalThreadStateException itse) {}
+		}
 	}
 
 	public void run() {
+		running = true;
+
 		String url = context.getString(R.string.version_url)+context.getPackageName();
 
 		Log.i(TAG, url);
@@ -58,6 +66,7 @@ public class Updater extends Thread
 
 		String currentVersion = getVersionNumber();
 
+		Log.i(TAG, currentVersion);
 		Log.i(TAG, response);
 
 		//compare version numbers
@@ -65,7 +74,8 @@ public class Updater extends Thread
 			handler.sendEmptyMessage(0);
 		}
 
-		Log.i(TAG, "end");
+		Log.i(TAG, "finished checking version");
+		running = false;
 	}
 
 
