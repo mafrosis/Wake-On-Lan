@@ -48,10 +48,12 @@ public final class R {
         public static final int mac_en=0x7f040006;
         public static final int menu_delete_en=0x7f04000a;
         public static final int menu_wake_en=0x7f040009;
+        public static final int no_en=0x7f04000d;
         public static final int port_en=0x7f040008;
         public static final int tab_history_en=0x7f040003;
         public static final int tab_wake_en=0x7f040004;
         public static final int title_en=0x7f040005;
         public static final int version_url=0x7f04000b;
+        public static final int yes_en=0x7f04000c;
     }
 }

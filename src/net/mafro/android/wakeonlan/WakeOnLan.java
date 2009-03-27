@@ -1,6 +1,9 @@
 package net.mafro.android.wakeonlan;
 
 import android.app.TabActivity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+
 import android.os.Bundle;
 
 import android.content.Context;
@@ -9,6 +12,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.DialogInterface;
 
 import android.database.Cursor;
 
@@ -71,6 +75,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+		checkForUpdates();
 
 		//configure tabs
 		TabHost th = getTabHost();
@@ -228,10 +234,25 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 			return;
 		}
 
-		//if version numbers don't match then open Market application
+		//compare version numbers
 		if(!getVersionNumber().equals(response)) {
-			Intent market = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pname:"+getPackageName()));
-			startActivity(market);
+
+			//prompt user for action
+			new AlertDialog.Builder(WakeOnLan.this)
+				.setTitle("Update Available")
+				.setMessage("Do you want to install the latest version?")
+				.setIcon(R.drawable.icon)
+				.setPositiveButton(R.string.yes_en, new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int whichButton) {
+						//if version numbers don't match then open Market application
+						Intent market = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pname:"+getPackageName()));
+						startActivity(market);
+					}
+
+			}).setNegativeButton(R.string.no_en, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {}
+			}).show();
 		}
 	}
 
@@ -244,6 +265,6 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 			Log.e(TAG, "Package name not found", e);
 		};
 		return version;
-	} 
+	}
 
 }

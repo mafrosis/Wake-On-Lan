@@ -12,4 +12,6 @@
     <string name="menu_wake_en">Send Wake Packet</string>
     <string name="menu_delete_en">Delete</string>
 	<string name="version_url">http://android.mafro.net/versions.php?app=</string>
+	<string name="yes_en">Yes</string>
+	<string name="no_en">No</string>
 </resources>
