@@ -190,6 +190,23 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 			//HACK hardcoded column indexes
 			sendPacket(cursor.getString(2), cursor.getString(3), cursor.getInt(4));
 			return true;
+			
+		case R.id.menu_edit:
+			//fire this record into edit mode in the next tab
+			EditText vtitle = (EditText)findViewById(R.id.title);
+			EditText vmac = (EditText)findViewById(R.id.mac);
+			EditText vip = (EditText)findViewById(R.id.ip);
+			EditText vport = (EditText)findViewById(R.id.port);
+			
+			vtitle.setText(cursor.getString(1));
+			vmac.setText(cursor.getString(2));
+			vip.setText(cursor.getString(3));
+			vport.setText(cursor.getString(4));
+			
+			TabHost th = getTabHost();
+			th.setCurrentTab(1);
+			return true;
+			
 		case R.id.menu_delete:
 			//use HistoryProvider to remove this row
 			Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(cursor.getInt(0)));

@@ -10,6 +10,7 @@
     <string name="ip_en">IP</string>
     <string name="port_en">Port</string>
     <string name="menu_wake_en">Send Wake Packet</string>
+	<string name="menu_edit_en">Edit</string>
     <string name="menu_delete_en">Delete</string>
 	<string name="version_url">http://android.mafro.net/versions.php?app=</string>
 	<string name="yes_en">Yes</string>

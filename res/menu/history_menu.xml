@@ -1,6 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+id/menu_wake"
 		android:title="@string/menu_wake_en" />
+	<item android:id="@+id/menu_edit"
+		android:title="@string/menu_edit_en" />
 	<item android:id="@+id/menu_delete"
 		android:title="@string/menu_delete_en" />
 </menu>
