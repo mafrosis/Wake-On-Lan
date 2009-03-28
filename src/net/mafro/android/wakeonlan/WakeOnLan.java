@@ -130,6 +130,11 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 		try {
 			MagicPacket.send(mac, ip, port);
 			
+		}catch(IllegalArgumentException iae) {
+			Log.e(TAG, "Sending Failed", iae);
+			notifyUser("Sending Failed:\n"+iae.getMessage(), WakeOnLan.this);
+			return false;
+			
 		}catch(Exception e) {
 			Log.e(TAG, "Sending Failed", e);
 			notifyUser("Sending Failed", WakeOnLan.this);

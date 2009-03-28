@@ -1,5 +1,7 @@
 package net.mafro.android.wakeonlan;
 
+import android.util.Log;
+
 import java.io.IOException;
 
 import java.net.InetAddress;
@@ -7,17 +9,20 @@ import java.net.UnknownHostException;
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.SocketException;
+import java.lang.IllegalArgumentException;
 
 public class MagicPacket
 {
+	private static final String TAG = "MagicPacket";
+	
 	public static final String BROADCAST = "192.168.1.255";
 	public static final int PORT = 9;
 	
-	public static void send(String mac, String ip) throws UnknownHostException, SocketException, IOException {
+	public static void send(String mac, String ip) throws UnknownHostException, SocketException, IOException, IllegalArgumentException {
 		send(ip, mac, PORT);
 	}
 
-	public static void send(String mac, String ip, int port) throws UnknownHostException, SocketException, IOException {
+	public static void send(String mac, String ip, int port) throws UnknownHostException, SocketException, IOException, IllegalArgumentException {
 		byte[] macBytes = getMacBytes(mac);
 		byte[] bytes = new byte[102];
 
@@ -40,14 +45,31 @@ public class MagicPacket
 
 	private static byte[] getMacBytes(String mac) throws IllegalArgumentException {
 		byte[] bytes = new byte[6];
-		String[] hex = mac.split("(\\:|\\-)");
-		if(hex.length != 6) {
+		String[] hex;
+		
+		if(mac.length() == 17) {
+			hex = mac.split("(\\:|\\-)");
+			if(hex.length != 6) {
+				throw new IllegalArgumentException("Invalid MAC address.");
+			}
+		}else if(mac.length() == 12) {
+			char[] chars;
+			hex = new String[6];
+			
+			for(int i=0; i<6; i++) {
+				chars = new char[2];
+				mac.getChars((i*2), (i*2)+2, chars, 0);
+				hex[i] = new String(chars);
+			}
+		}else{
 			throw new IllegalArgumentException("Invalid MAC address.");
 		}
+		
 		try {
-			for(int i = 0; i < 6; i++) {
+			for(int i=0; i<6; i++) {
 				bytes[i] = (byte) Integer.parseInt(hex[i], 16);
 			}
+			
 		}catch(NumberFormatException e) {
 			throw new IllegalArgumentException("Invalid hex digit in MAC address.");
 		}
