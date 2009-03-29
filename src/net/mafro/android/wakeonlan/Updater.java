@@ -71,7 +71,31 @@ public class Updater extends Thread
 
 		//compare version numbers
 		if(!currentVersion.equals(response)) {
-			handler.sendEmptyMessage(0);
+			//parse into doubles
+			double current, latest;
+			
+			String[] v1 = currentVersion.split("\\.");
+			switch(v1.length) {
+			case 1: current = Double.valueOf(v1[0]); break;
+			case 2: current = Double.valueOf(v1[0]+"."+v1[1]); break;
+			case 3: current = Double.valueOf(v1[0]+"."+v1[1]+v1[2]); break;
+			default: current = 0;
+			}
+			
+			String[] v2 = response.split("\\.");
+			switch(v2.length) {
+			case 1: latest = Double.valueOf(v2[0]); break;
+			case 2: latest = Double.valueOf(v2[0]+"."+v2[1]); break;
+			case 3: latest = Double.valueOf(v2[0]+"."+v2[1]+v2[2]); break;
+			default: latest = 0;
+			}
+			
+			Log.i(TAG, Double.toString(current));
+			Log.i(TAG, Double.toString(latest));
+			
+			if(Double.compare(latest, current) > 0) {
+				handler.sendEmptyMessage(0);
+			}
 		}
 
 		Log.i(TAG, "finished checking version");
