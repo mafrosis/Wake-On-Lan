@@ -13,6 +13,7 @@ import android.content.UriMatcher;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 
 import android.database.Cursor;
 
@@ -49,6 +50,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 	
     public static final int MENU_ITEM_WAKE = Menu.FIRST;
     public static final int MENU_ITEM_DELETE = Menu.FIRST + 1;
+
+	private static final long WEEK = 604800;
 	
 	private Cursor cursor;	//main history cursor
 
@@ -100,7 +103,19 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 		registerForContextMenu(lvHistory);
 
 		//check for updates
-		Updater.checkForUpdates(this, handler);
+		SharedPreferences settings = getSharedPreferences(TAG, 0);
+		long last_update = settings.getLong("last_update", 0);
+		long now = System.currentTimeMillis();
+		
+		Log.i(TAG+"Update", Long.toString(last_update));
+		
+		if((last_update == 0) || (last_update < now-WEEK)) {
+			Updater.checkForUpdates(this, handler);
+			
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putLong("last_update", now);
+			editor.commit();
+		}
     }
 
 	public void onClick(View v)
@@ -224,7 +239,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 		}
 	}
 
-	public static void notifyUser(String message, Context context) {
+	public static void notifyUser(String message, Context context)
+	{
 		if (notification != null) {
 			notification.setText(message);
 			notification.show();
@@ -235,7 +251,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 	}
 
 
-	private Handler handler = new Handler() {
+	private Handler handler = new Handler()
+	{
 		@Override
 		public void handleMessage(Message msg) {
 			//prompt user for action
