@@ -17,13 +17,17 @@ public class MagicPacket
 	
 	public static final String BROADCAST = "192.168.1.255";
 	public static final int PORT = 9;
+	public static final char SEPARATOR = ':';
 	
-	public static void send(String mac, String ip) throws UnknownHostException, SocketException, IOException, IllegalArgumentException {
-		send(ip, mac, PORT);
+	public static String send(String mac, String ip) throws UnknownHostException, SocketException, IOException, IllegalArgumentException
+	{
+		return send(mac, ip, PORT);
 	}
 
-	public static void send(String mac, String ip, int port) throws UnknownHostException, SocketException, IOException, IllegalArgumentException {
-		byte[] macBytes = getMacBytes(mac);
+	public static String send(String mac, String ip, int port) throws UnknownHostException, SocketException, IOException, IllegalArgumentException
+	{
+		String[] hex = validateMac(mac);
+		byte[] macBytes = convertToBytes(hex);
 		byte[] bytes = new byte[102];
 
 		//fill first 6 bytes
@@ -41,10 +45,12 @@ public class MagicPacket
 		DatagramSocket socket = new DatagramSocket();
 		socket.send(packet);
 		socket.close();
+		
+		return hex[0]+SEPARATOR+hex[1]+SEPARATOR+hex[2]+SEPARATOR+hex[3]+SEPARATOR+hex[4]+SEPARATOR+hex[5];
 	}
-
-	private static byte[] getMacBytes(String mac) throws IllegalArgumentException {
-		byte[] bytes = new byte[6];
+	
+	private static String[] validateMac(String mac) throws IllegalArgumentException
+	{
 		String[] hex;
 		
 		if(mac.length() == 17) {
@@ -64,6 +70,12 @@ public class MagicPacket
 		}else{
 			throw new IllegalArgumentException("Invalid MAC address.");
 		}
+		return hex;
+	}
+
+	private static byte[] convertToBytes(String[] hex) throws IllegalArgumentException
+	{
+		byte[] bytes = new byte[6];
 		
 		try {
 			for(int i=0; i<6; i++) {

@@ -116,33 +116,35 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 			String ip = vip.getText().toString();
 			int port = Integer.valueOf(vport.getText().toString());
 			
-			if(sendPacket(mac, ip, port)) {
+			String formattedMac = sendPacket(mac, ip, port);
+			if(formattedMac != null) {
 				//on succesful send, add to history list
-				addToHistory(title, mac, ip, port);
+				addToHistory(title, formattedMac, ip, port);
 			}
 		}
 	}
 	
-	private boolean sendPacket(String mac, String ip, int port)
+	private String sendPacket(String mac, String ip, int port)
 	{
 		Log.i(TAG, mac+" "+ip+":"+Integer.toString(port));
+		String formattedMac = null;
 		
 		try {
-			MagicPacket.send(mac, ip, port);
+			formattedMac = MagicPacket.send(mac, ip, port);
 			
 		}catch(IllegalArgumentException iae) {
 			Log.e(TAG, "Sending Failed", iae);
 			notifyUser("Sending Failed:\n"+iae.getMessage(), WakeOnLan.this);
-			return false;
+			return null;
 			
 		}catch(Exception e) {
 			Log.e(TAG, "Sending Failed", e);
 			notifyUser("Sending Failed", WakeOnLan.this);
-			return false;
+			return null;
 		}
 		
 		notifyUser("Magic Packet sent", WakeOnLan.this);
-		return true;
+		return formattedMac;
 	}
 	
 	private void addToHistory(String title, String mac, String ip, int port)
