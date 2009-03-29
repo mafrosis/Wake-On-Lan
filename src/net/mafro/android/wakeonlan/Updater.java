@@ -61,6 +61,7 @@ public class Updater extends Thread
 		try{
 			response = hc.execute(req, rh);
 		}catch(IOException ioe) {
+			running = false;
 			return;
 		}
 
