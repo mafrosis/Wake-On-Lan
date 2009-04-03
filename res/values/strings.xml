@@ -7,7 +7,7 @@
     <string name="tab_wake_en">Wake</string>
     <string name="title_en">Reference</string>
     <string name="mac_en">MAC Address</string>
-    <string name="ip_en">IP</string>
+    <string name="ip_en">Host Name / IP Address</string>
     <string name="port_en">Port</string>
     <string name="menu_wake_en">Send Wake Packet</string>
 	<string name="menu_edit_en">Edit</string>
