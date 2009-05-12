@@ -54,6 +54,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
     public static final int MENU_ITEM_DELETE = Menu.FIRST + 1;
 
 	private static final long WEEK = 604800;
+
+	private static int _editModeID = 0;
 	
 	private Cursor cursor;	//main history cursor
 
@@ -138,6 +140,13 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			
 			String formattedMac = sendPacket(mac, ip, port);
 			if(formattedMac != null) {
+				//remove the previous item if we are editing
+				if(_editModeID > 0) {
+					Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(_editModeID));
+					getContentResolver().delete(itemUri, null, null);
+					_editModeID = 0;
+				}
+
 				//on succesful send, add to history list
 				addToHistory(title, formattedMac, ip, port);
 			}
@@ -233,6 +242,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			EditText vmac = (EditText)findViewById(R.id.mac);
 			EditText vip = (EditText)findViewById(R.id.ip);
 			EditText vport = (EditText)findViewById(R.id.port);
+
+			//save the id of record being edited - delete it on save and create new
+			_editModeID = cursor.getInt(0);
 			
 			vtitle.setText(cursor.getString(1));
 			vmac.setText(cursor.getString(2));
