@@ -67,8 +67,8 @@ public class Updater extends Thread
 
 		String currentVersion = getVersionNumber();
 
-		Log.i(TAG, currentVersion);
-		Log.i(TAG, response);
+		Log.i(TAG, "local: "+currentVersion);
+		Log.i(TAG, "remote: "+response);
 
 		//compare version numbers
 		if(!currentVersion.equals(response)) {
