@@ -3,14 +3,14 @@
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     
-    android:padding="6dip">
+    android:padding="4dip">
     
     <ImageView
         android:id="@+id/icon"
         
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_marginRight="6dip"
+        android:layout_marginRight="10dip"
         
         android:src="@drawable/icon" />
 
