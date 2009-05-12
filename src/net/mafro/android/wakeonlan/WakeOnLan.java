@@ -26,8 +26,10 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.EditText;
 import android.widget.Button;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Toast;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,7 +45,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 
-public class WakeOnLan extends TabActivity implements OnClickListener
+public class WakeOnLan extends TabActivity implements OnClickListener, OnItemClickListener
 {
 
 	private static final String TAG = "WakeOnLan";
@@ -81,7 +83,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 		
 		th.setCurrentTab(0);
 		
-		//add listener for wake button
+		//register self as listener for wake button
 		Button sendWake = (Button)findViewById(R.id.send_wake);
 		sendWake.setOnClickListener(this);
 		
@@ -98,6 +100,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 
 		ListView lvHistory = (ListView)findViewById(R.id.history);
 		lvHistory.setAdapter(adapter);
+
+		//register self as listener for item clicks
+		lvHistory.setOnItemClickListener(this);
 		
 		//set self as context menu listener
 		registerForContextMenu(lvHistory);
@@ -137,6 +142,15 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 				addToHistory(title, formattedMac, ip, port);
 			}
 		}
+	}
+
+	public void onItemClick(AdapterView parent, View v, int position, long id)
+	{
+		//move bound cursor to item that was clicked
+		cursor.moveToPosition(position);
+		
+		//HACK hardcoded column indexes
+		sendPacket(cursor.getString(2), cursor.getString(3), cursor.getInt(4));
 	}
 	
 	private String sendPacket(String mac, String ip, int port)
@@ -234,6 +248,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener
 			Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(cursor.getInt(0)));
 			getContentResolver().delete(itemUri, null, null);
 			return true;
+
 		default:
 			return super.onContextItemSelected(item);
 		}
