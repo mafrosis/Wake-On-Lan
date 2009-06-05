@@ -33,6 +33,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,7 +46,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 
-public class WakeOnLan extends TabActivity implements OnClickListener, OnItemClickListener, OnTabChangeListener
+public class WakeOnLan extends TabActivity implements OnClickListener, OnItemClickListener, OnTabChangeListener, OnFocusChangeListener
 {
 
 	private static final String TAG = "WakeOnLan";
@@ -86,7 +87,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		
 		th.setCurrentTab(0);
 
-		//set self as tab changed listener
+		//register self as tab changed listener
 		th.setOnTabChangedListener(this);
 
 		//set defaults on Wake tab
@@ -100,6 +101,10 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		sendWake.setOnClickListener(this);
 		Button clearWake = (Button)findViewById(R.id.clear_wake);
 		clearWake.setOnClickListener(this);
+
+		//register self as mac address field focus change listener
+		EditText vmac = (EditText)findViewById(R.id.mac);
+		vmac.setOnFocusChangeListener(this);
 		
 		//load History list
 		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, null);
@@ -244,6 +249,23 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 				sendWake.setText(R.string.button_wake_en);
 				Button clearWake = (Button)findViewById(R.id.clear_wake);
 				clearWake.setText(R.string.button_clear_en);
+			}
+		}
+	}
+
+	public void onFocusChange(View v, boolean hasFocus)
+	{
+		//validate mac address on field exit
+		if(hasFocus == false) {
+			EditText vmac = (EditText)v;
+			
+			try {
+				//validate our mac address
+				MagicPacket.cleanMac(vmac.getText().toString());
+				vmac.setError(null);
+
+			}catch(IllegalArgumentException iae) {
+				vmac.setError("Invalid MAC Address");
 			}
 		}
 	}
