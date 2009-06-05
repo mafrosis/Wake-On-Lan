@@ -265,7 +265,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 				vmac.setError(null);
 
 			}catch(IllegalArgumentException iae) {
-				vmac.setError("Invalid MAC Address");
+				vmac.setError(getString(R.string.invalid_mac_en));
 			}
 		}
 	}
@@ -280,16 +280,16 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			
 		}catch(IllegalArgumentException iae) {
 			Log.e(TAG, "Sending Failed", iae);
-			notifyUser("Sending Failed:\n"+iae.getMessage(), WakeOnLan.this);
+			notifyUser(getString(R.string.send_failed_en)+":\n"+iae.getMessage(), WakeOnLan.this);
 			return null;
 			
 		}catch(Exception e) {
 			Log.e(TAG, "Sending Failed", e);
-			notifyUser("Sending Failed", WakeOnLan.this);
+			notifyUser(getString(R.string.send_failed_en), WakeOnLan.this);
 			return null;
 		}
 		
-		notifyUser("Magic Packet sent", WakeOnLan.this);
+		notifyUser(getString(R.string.packet_sent_en), WakeOnLan.this);
 		return formattedMac;
 	}
 	
@@ -409,14 +409,14 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		public void handleMessage(Message msg) {
 			//prompt user for action
 			new AlertDialog.Builder(WakeOnLan.this)
-				.setTitle("Update Available")
-				.setMessage("Do you want to install the latest version?")
+				.setTitle(getString(R.string.update_available_en))
+				.setMessage(getString(R.string.install_latest_question_en))
 				.setIcon(R.drawable.icon)
 				.setPositiveButton(R.string.yes_en, new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int whichButton) {
 						//if version numbers don't match then open Market application
-						Intent market = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pname:"+getPackageName()));
+						Intent market = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.market_url)+getPackageName()));
 						startActivity(market);
 					}
 
