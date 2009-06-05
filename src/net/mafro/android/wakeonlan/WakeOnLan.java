@@ -157,9 +157,12 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 	{
 		//move bound cursor to item that was clicked
 		cursor.moveToPosition(position);
-		
-		//HACK hardcoded column indexes
-		sendPacket(cursor.getString(2), cursor.getString(3), cursor.getInt(4));
+
+		int macColumn = cursor.getColumnIndex(History.Items.MAC);
+		int ipColumn = cursor.getColumnIndex(History.Items.IP);
+		int portColumn = cursor.getColumnIndex(History.Items.PORT);
+
+		sendPacket(cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
 	}
 	
 	private String sendPacket(String mac, String ip, int port)
@@ -232,8 +235,11 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		
 		switch (item.getItemId()) {
 		case R.id.menu_wake:
-			//HACK hardcoded column indexes
-			sendPacket(cursor.getString(2), cursor.getString(3), cursor.getInt(4));
+			int macColumn = cursor.getColumnIndex(History.Items.MAC);
+			int ipColumn = cursor.getColumnIndex(History.Items.IP);
+			int portColumn = cursor.getColumnIndex(History.Items.PORT);
+			
+			sendPacket(cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
 			return true;
 			
 		case R.id.menu_edit:
