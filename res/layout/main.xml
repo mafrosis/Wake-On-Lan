@@ -76,12 +76,28 @@
 						android:id="@+id/port"
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content" />
-						
-					<Button android:id="@+id/send_wake"
-						android:layout_width="wrap_content" 
-						android:layout_height="wrap_content" 
-						android:layout_gravity="right"
-						android:text="@string/button_wake_en" />
+					
+					<LinearLayout
+						android:orientation="horizontal"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="6px">
+
+						<Button
+							android:id="@+id/clear_wake"
+							android:layout_width="wrap_content" 
+							android:layout_height="wrap_content" 
+							android:layout_gravity="left"
+							android:text="@string/button_clear_en" />
+						<Button
+							android:id="@+id/send_wake"
+							android:layout_width="wrap_content" 
+							android:layout_height="wrap_content" 
+							android:layout_weight="1"
+							android:layout_gravity="right"
+							android:text="@string/button_wake_en" />
+					</LinearLayout>
+
 				</LinearLayout>
 			</ScrollView>
 

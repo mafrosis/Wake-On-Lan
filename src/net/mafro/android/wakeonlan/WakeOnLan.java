@@ -98,6 +98,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		//register self as listener for wake button
 		Button sendWake = (Button)findViewById(R.id.send_wake);
 		sendWake.setOnClickListener(this);
+		Button clearWake = (Button)findViewById(R.id.clear_wake);
+		clearWake.setOnClickListener(this);
 		
 		//load History list
 		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, null);
@@ -176,9 +178,6 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 
 				//ensure our edit is created, even if it duplicates another entry
 				addToHistory(title, formattedMac, ip, port, true);
-
-				//reset our send button text
-				((Button)v).setText(R.string.button_wake_en);
 			}
 
 			//finished typing (either send or edit)
@@ -186,6 +185,26 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 
 			//switch back to the history tab
 			getTabHost().setCurrentTab(0);
+
+		}else if(v.getId() == R.id.clear_wake) {
+			if(_editModeID == 0) {
+				//clear the form
+				EditText vtitle = (EditText)findViewById(R.id.title);
+				vtitle.setText(null);
+				EditText vmac = (EditText)findViewById(R.id.mac);
+				vmac.setText(null);
+				EditText vip = (EditText)findViewById(R.id.ip);
+				vip.setText(null);
+				EditText vport = (EditText)findViewById(R.id.port);
+				vport.setText(null);
+			}else{
+				//cancel editing
+				_editModeID = 0;
+				typingMode = false;
+
+				//switch back to the history tab
+				getTabHost().setCurrentTab(0);
+			}
 		}
 	}
 
@@ -219,6 +238,12 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 				vmac.setText(null);
 				vip.setText(MagicPacket.BROADCAST);
 				vport.setText(Integer.toString(MagicPacket.PORT));
+
+				//reset both our button's text
+				Button sendWake = (Button)findViewById(R.id.send_wake);
+				sendWake.setText(R.string.button_wake_en);
+				Button clearWake = (Button)findViewById(R.id.clear_wake);
+				clearWake.setText(R.string.button_clear_en);
 			}
 		}
 	}
@@ -323,9 +348,11 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			vip.setText(cursor.getString(3));
 			vport.setText(cursor.getString(4));
 
-			//change text on button
-			Button sendWake = (Button)findViewById(R.id.send_wake);
-			sendWake.setText(R.string.button_save_en);
+			//change text on both our button's
+			Button saveEdit = (Button)findViewById(R.id.send_wake);
+			saveEdit.setText(R.string.button_save_en);
+			Button cancelEdit = (Button)findViewById(R.id.clear_wake);
+			cancelEdit.setText(R.string.button_cancel_en);
 			
 			TabHost th = getTabHost();
 			th.setCurrentTab(1);

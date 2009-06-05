@@ -4,6 +4,8 @@
 	<string name="app_desc">A simple Wake On Lan application. Stores history of sent packets, to save remembering MAC addresses.</string>
     <string name="button_wake_en">Send Wake Packet</string>
     <string name="button_save_en">Save &amp; End Editing</string>
+    <string name="button_clear_en">Clear Form</string>
+    <string name="button_cancel_en">Cancel Edit</string>
     <string name="tab_history_en">History</string>
     <string name="tab_wake_en">Wake</string>
     <string name="title_en">Reference</string>
