@@ -191,30 +191,31 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 	private void addToHistory(String title, String mac, String ip, int port)
 	{
 		boolean exists = false;
-		
-		//check mac doesnt already exist
+
+		//don't allow duplicates in history list
 		if(cursor.moveToFirst()) {
 			int macColumn = cursor.getColumnIndex(History.Items.MAC);
+			int ipColumn = cursor.getColumnIndex(History.Items.IP);
+			int portColumn = cursor.getColumnIndex(History.Items.PORT);
 
 			do {
-				if(mac.equals(cursor.getString(macColumn))) {
+				if(mac.equals(cursor.getString(macColumn)) && ip.equals(cursor.getString(ipColumn)) && (port == cursor.getInt(portColumn))) {
 					exists = true;
 					break;
 				}
 			} while (cursor.moveToNext());
 		}
-		
-		//create if not exists
+
+		//create only if the item doesn't exist
 		if(exists == false) {
 			ContentValues values = new ContentValues(4);
 			values.put(History.Items.TITLE, title);
 			values.put(History.Items.MAC, mac);
 			values.put(History.Items.IP, ip);
 			values.put(History.Items.PORT, port);
-			Uri uri = getContentResolver().insert(History.Items.CONTENT_URI, values);
+			getContentResolver().insert(History.Items.CONTENT_URI, values);
 		}
 	}
-
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
