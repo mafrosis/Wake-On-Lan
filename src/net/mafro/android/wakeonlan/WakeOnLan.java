@@ -56,6 +56,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 	private static final long WEEK = 604800;
 
 	private static int _editModeID = 0;
+	private static boolean typingMode = false;
 	
 	private Cursor cursor;	//main history cursor
 
@@ -150,6 +151,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 				//on succesful send, add to history list
 				if(formattedMac != null) {
 					addToHistory(title, formattedMac, ip, port, false);
+				}else{
+					//return on sending failed
+					return;
 				}
 
 			}else{
@@ -175,14 +179,13 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 
 				//reset our send button text
 				((Button)v).setText(R.string.button_wake_en);
-
-				//switch back to the history tab
-				getTabHost().setCurrentTab(0);
 			}
 
-			//set form back to defaults
-			vip.setText(MagicPacket.BROADCAST);
-			vport.setText(Integer.toString(MagicPacket.PORT));
+			//finished typing (either send or edit)
+			typingMode = false;
+
+			//switch back to the history tab
+			getTabHost().setCurrentTab(0);
 		}
 	}
 
@@ -200,12 +203,23 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 
 	public void onTabChanged(String tabId)
 	{
-		if(tabId.equals("tab_history")) {
-			//clear the title and mac fields
-			EditText vtitle = (EditText)findViewById(R.id.title);
-			vtitle.setText(null);
-			EditText vmac = (EditText)findViewById(R.id.mac);
-			vmac.setText(null);
+		if(tabId.equals("tab_wake")) {
+			//enter typing mode - no clear of form until exit typing mode
+			typingMode = true;
+
+		}else if(tabId.equals("tab_history")) {
+			//set form back to defaults, if typing mode has ended (button was clicked)
+			if(typingMode == false) {
+				EditText vtitle = (EditText)findViewById(R.id.title);
+				EditText vmac = (EditText)findViewById(R.id.mac);
+				EditText vip = (EditText)findViewById(R.id.ip);
+				EditText vport = (EditText)findViewById(R.id.port);
+
+				vtitle.setText(null);
+				vmac.setText(null);
+				vip.setText(MagicPacket.BROADCAST);
+				vport.setText(Integer.toString(MagicPacket.PORT));
+			}
 		}
 	}
 	
