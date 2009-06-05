@@ -45,7 +45,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 
-public class WakeOnLan extends TabActivity implements OnClickListener, OnItemClickListener
+public class WakeOnLan extends TabActivity implements OnClickListener, OnItemClickListener, OnTabChangeListener
 {
 
 	private static final String TAG = "WakeOnLan";
@@ -84,16 +84,19 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		th.addTab(th.newTabSpec("tab_wake").setIndicator(getString(R.string.tab_wake_en), getResources().getDrawable(R.drawable.wake)).setContent(R.id.wakeview));
 		
 		th.setCurrentTab(0);
+
+		//set self as tab changed listener
+		th.setOnTabChangedListener(this);
+
+		//set defaults on Wake tab
+		EditText vip = (EditText)findViewById(R.id.ip);
+		vip.setText(MagicPacket.BROADCAST);
+		EditText vport = (EditText)findViewById(R.id.port);
+		vport.setText(Integer.toString(MagicPacket.PORT));
 		
 		//register self as listener for wake button
 		Button sendWake = (Button)findViewById(R.id.send_wake);
 		sendWake.setOnClickListener(this);
-		
-		//set defaults on Wake tab
-		EditText vip = (EditText)findViewById(R.id.ip);
-		EditText vport = (EditText)findViewById(R.id.port);
-		vip.setText(MagicPacket.BROADCAST);
-		vport.setText(Integer.toString(MagicPacket.PORT));
 		
 		//load History list
 		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, null);
@@ -115,6 +118,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		long now = System.currentTimeMillis();
 		
 		Log.i(TAG+"Update", Long.toString(last_update));
+		Log.i(TAG+"Update", Long.toString(now-WEEK));
 		
 		if((last_update == 0) || (last_update < now-WEEK)) {
 			Updater.checkForUpdates(this, handler);
@@ -137,19 +141,48 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			String mac = vmac.getText().toString();
 			String ip = vip.getText().toString();
 			int port = Integer.valueOf(vport.getText().toString());
-			
-			String formattedMac = sendPacket(mac, ip, port);
-			if(formattedMac != null) {
-				//remove the previous item if we are editing
-				if(_editModeID > 0) {
-					Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(_editModeID));
-					getContentResolver().delete(itemUri, null, null);
-					_editModeID = 0;
-				}
+
+			//check for edit mode - no send of packet
+			if(_editModeID == 0) {
+				//send the magic packet
+				String formattedMac = sendPacket(mac, ip, port);
 
 				//on succesful send, add to history list
-				addToHistory(title, formattedMac, ip, port);
+				if(formattedMac != null) {
+					addToHistory(title, formattedMac, ip, port, false);
+				}
+
+			}else{
+				String formattedMac = null;
+
+				try {
+					//validate and clean our mac address
+					formattedMac = MagicPacket.cleanMac(mac);
+
+				}catch(IllegalArgumentException iae) {
+					Log.e(TAG, iae.getMessage(), iae);
+					notifyUser(iae.getMessage(), WakeOnLan.this);
+					return;
+				}
+
+				//remove the previous item
+				Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(_editModeID));
+				getContentResolver().delete(itemUri, null, null);
+				_editModeID = 0;
+
+				//ensure our edit is created, even if it duplicates another entry
+				addToHistory(title, formattedMac, ip, port, true);
+
+				//reset our send button text
+				((Button)v).setText(R.string.button_wake_en);
+
+				//switch back to the history tab
+				getTabHost().setCurrentTab(0);
 			}
+
+			//set form back to defaults
+			vip.setText(MagicPacket.BROADCAST);
+			vport.setText(Integer.toString(MagicPacket.PORT));
 		}
 	}
 
@@ -163,6 +196,17 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		int portColumn = cursor.getColumnIndex(History.Items.PORT);
 
 		sendPacket(cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+	}
+
+	public void onTabChanged(String tabId)
+	{
+		if(tabId.equals("tab_history")) {
+			//clear the title and mac fields
+			EditText vtitle = (EditText)findViewById(R.id.title);
+			vtitle.setText(null);
+			EditText vmac = (EditText)findViewById(R.id.mac);
+			vmac.setText(null);
+		}
 	}
 	
 	private String sendPacket(String mac, String ip, int port)
@@ -188,26 +232,32 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		return formattedMac;
 	}
 	
-	private void addToHistory(String title, String mac, String ip, int port)
+	private void addToHistory(String title, String mac, String ip, int port, boolean force)
 	{
-		boolean exists = false;
+		boolean create = force;
 
-		//don't allow duplicates in history list
-		if(cursor.moveToFirst()) {
-			int macColumn = cursor.getColumnIndex(History.Items.MAC);
-			int ipColumn = cursor.getColumnIndex(History.Items.IP);
-			int portColumn = cursor.getColumnIndex(History.Items.PORT);
+		if(force == false) {
+			boolean exists = false;
 
-			do {
-				if(mac.equals(cursor.getString(macColumn)) && ip.equals(cursor.getString(ipColumn)) && (port == cursor.getInt(portColumn))) {
-					exists = true;
-					break;
-				}
-			} while (cursor.moveToNext());
+			//don't allow duplicates in history list
+			if(cursor.moveToFirst()) {
+				int macColumn = cursor.getColumnIndex(History.Items.MAC);
+				int ipColumn = cursor.getColumnIndex(History.Items.IP);
+				int portColumn = cursor.getColumnIndex(History.Items.PORT);
+
+				do {
+					if(mac.equals(cursor.getString(macColumn)) && ip.equals(cursor.getString(ipColumn)) && (port == cursor.getInt(portColumn))) {
+						exists = true;
+						break;
+					}
+				} while (cursor.moveToNext());
+			}
+
+			//create only if the item doesn't exist
+			if(exists == false) { create = true; }
 		}
-
-		//create only if the item doesn't exist
-		if(exists == false) {
+				
+		if(create == true) {
 			ContentValues values = new ContentValues(4);
 			values.put(History.Items.TITLE, title);
 			values.put(History.Items.MAC, mac);
@@ -253,10 +303,15 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			//save the id of record being edited - delete it on save and create new
 			_editModeID = cursor.getInt(0);
 			
+			//display editing data
 			vtitle.setText(cursor.getString(1));
 			vmac.setText(cursor.getString(2));
 			vip.setText(cursor.getString(3));
 			vport.setText(cursor.getString(4));
+
+			//change text on button
+			Button sendWake = (Button)findViewById(R.id.send_wake);
+			sendWake.setText(R.string.button_save_en);
 			
 			TabHost th = getTabHost();
 			th.setCurrentTab(1);

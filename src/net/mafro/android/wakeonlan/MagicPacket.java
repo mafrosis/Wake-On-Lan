@@ -48,6 +48,12 @@ public class MagicPacket
 		
 		return hex[0]+SEPARATOR+hex[1]+SEPARATOR+hex[2]+SEPARATOR+hex[3]+SEPARATOR+hex[4]+SEPARATOR+hex[5];
 	}
+
+	public static String cleanMac(String mac) throws IllegalArgumentException
+	{
+		String[] hex = validateMac(mac);
+		return hex[0]+SEPARATOR+hex[1]+SEPARATOR+hex[2]+SEPARATOR+hex[3]+SEPARATOR+hex[4]+SEPARATOR+hex[5];
+	}
 	
 	private static String[] validateMac(String mac) throws IllegalArgumentException
 	{
