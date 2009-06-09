@@ -153,7 +153,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			//check for edit mode - no send of packet
 			if(_editModeID == 0) {
 				//send the magic packet
-				String formattedMac = sendPacket(mac, ip, port);
+				String formattedMac = sendPacket(title, mac, ip, port);
 
 				//on succesful send, add to history list
 				if(formattedMac != null) {
@@ -218,11 +218,12 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		//move bound cursor to item that was clicked
 		cursor.moveToPosition(position);
 
+		int titleColumn = cursor.getColumnIndex(History.Items.TITLE);
 		int macColumn = cursor.getColumnIndex(History.Items.MAC);
 		int ipColumn = cursor.getColumnIndex(History.Items.IP);
 		int portColumn = cursor.getColumnIndex(History.Items.PORT);
 
-		sendPacket(cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+		sendPacket(cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
 	}
 
 	public void onTabChanged(String tabId)
@@ -270,7 +271,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		}
 	}
 	
-	private String sendPacket(String mac, String ip, int port)
+	private String sendPacket(String title, String mac, String ip, int port)
 	{
 		Log.i(TAG, mac+" "+ip+":"+Integer.toString(port));
 		String formattedMac = null;
@@ -289,7 +290,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			return null;
 		}
 		
-		notifyUser(getString(R.string.packet_sent_en), WakeOnLan.this);
+		notifyUser(getString(R.string.packet_sent_en)+" to "+title, WakeOnLan.this);
 		return formattedMac;
 	}
 	
@@ -353,7 +354,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		
 		switch (item.getItemId()) {
 		case R.id.menu_wake:
-			sendPacket(cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+			sendPacket(cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
 			return true;
 			
 		case R.id.menu_edit:
