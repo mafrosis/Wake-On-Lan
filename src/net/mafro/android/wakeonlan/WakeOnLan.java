@@ -345,12 +345,14 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		//move bound cursor to item that was clicked
 		cursor.moveToPosition(info.position);
 		
+		int idColumn = cursor.getColumnIndex(History.Items._ID);
+		int titleColumn = cursor.getColumnIndex(History.Items.TITLE);
+		int macColumn = cursor.getColumnIndex(History.Items.MAC);
+		int ipColumn = cursor.getColumnIndex(History.Items.IP);
+		int portColumn = cursor.getColumnIndex(History.Items.PORT);
+		
 		switch (item.getItemId()) {
 		case R.id.menu_wake:
-			int macColumn = cursor.getColumnIndex(History.Items.MAC);
-			int ipColumn = cursor.getColumnIndex(History.Items.IP);
-			int portColumn = cursor.getColumnIndex(History.Items.PORT);
-			
 			sendPacket(cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
 			return true;
 			
@@ -362,13 +364,13 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			EditText vport = (EditText)findViewById(R.id.port);
 
 			//save the id of record being edited - delete it on save and create new
-			_editModeID = cursor.getInt(0);
+			_editModeID = cursor.getInt(idColumn);
 			
 			//display editing data
-			vtitle.setText(cursor.getString(1));
-			vmac.setText(cursor.getString(2));
-			vip.setText(cursor.getString(3));
-			vport.setText(cursor.getString(4));
+			vtitle.setText(cursor.getString(titleColumn));
+			vmac.setText(cursor.getString(macColumn));
+			vip.setText(cursor.getString(ipColumn));
+			vport.setText(cursor.getString(portColumn));
 
 			//change text on both our button's
 			Button saveEdit = (Button)findViewById(R.id.send_wake);
@@ -382,7 +384,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			
 		case R.id.menu_delete:
 			//use HistoryProvider to remove this row
-			Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(cursor.getInt(0)));
+			Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(cursor.getInt(idColumn)));
 			getContentResolver().delete(itemUri, null, null);
 			return true;
 
