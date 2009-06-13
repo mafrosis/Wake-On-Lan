@@ -198,6 +198,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 				vtitle.setText(null);
 				EditText vmac = (EditText)findViewById(R.id.mac);
 				vmac.setText(null);
+				vmac.setError(null);
 				EditText vip = (EditText)findViewById(R.id.ip);
 				vip.setText(null);
 				EditText vport = (EditText)findViewById(R.id.port);
@@ -244,6 +245,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 				vmac.setText(null);
 				vip.setText(MagicPacket.BROADCAST);
 				vport.setText(Integer.toString(MagicPacket.PORT));
+				
+				//clear any errors
+				vmac.setError(null);
 
 				//reset both our button's text
 				Button sendWake = (Button)findViewById(R.id.send_wake);
@@ -262,7 +266,11 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			
 			try {
 				//validate our mac address
-				MagicPacket.cleanMac(vmac.getText().toString());
+				String mac = vmac.getText().toString();
+				if(mac.length() > 0) {
+					mac = MagicPacket.cleanMac(mac);
+					vmac.setText(mac);
+				}
 				vmac.setError(null);
 
 			}catch(IllegalArgumentException iae) {
