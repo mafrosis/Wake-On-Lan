@@ -153,7 +153,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			//check for edit mode - no send of packet
 			if(_editModeID == 0) {
 				//send the magic packet
-				String formattedMac = sendPacket(mac, ip, port);
+				String formattedMac = sendPacket(title, mac, ip, port);
 
 				//on succesful send, add to history list
 				if(formattedMac != null) {
@@ -218,11 +218,12 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		//move bound cursor to item that was clicked
 		cursor.moveToPosition(position);
 
+		int titleColumn = cursor.getColumnIndex(History.Items.TITLE);
 		int macColumn = cursor.getColumnIndex(History.Items.MAC);
 		int ipColumn = cursor.getColumnIndex(History.Items.IP);
 		int portColumn = cursor.getColumnIndex(History.Items.PORT);
 
-		sendPacket(cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+		sendPacket(cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
 	}
 
 	public void onTabChanged(String tabId)
@@ -270,7 +271,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		}
 	}
 	
-	private String sendPacket(String mac, String ip, int port)
+	private String sendPacket(String title, String mac, String ip, int port)
 	{
 		Log.i(TAG, mac+" "+ip+":"+Integer.toString(port));
 		String formattedMac = null;
@@ -289,7 +290,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			return null;
 		}
 		
-		notifyUser(getString(R.string.packet_sent_en), WakeOnLan.this);
+		notifyUser(getString(R.string.packet_sent_en)+" to "+title, WakeOnLan.this);
 		return formattedMac;
 	}
 	
@@ -345,13 +346,15 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		//move bound cursor to item that was clicked
 		cursor.moveToPosition(info.position);
 		
+		int idColumn = cursor.getColumnIndex(History.Items._ID);
+		int titleColumn = cursor.getColumnIndex(History.Items.TITLE);
+		int macColumn = cursor.getColumnIndex(History.Items.MAC);
+		int ipColumn = cursor.getColumnIndex(History.Items.IP);
+		int portColumn = cursor.getColumnIndex(History.Items.PORT);
+		
 		switch (item.getItemId()) {
 		case R.id.menu_wake:
-			int macColumn = cursor.getColumnIndex(History.Items.MAC);
-			int ipColumn = cursor.getColumnIndex(History.Items.IP);
-			int portColumn = cursor.getColumnIndex(History.Items.PORT);
-			
-			sendPacket(cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+			sendPacket(cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
 			return true;
 			
 		case R.id.menu_edit:
@@ -362,13 +365,13 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			EditText vport = (EditText)findViewById(R.id.port);
 
 			//save the id of record being edited - delete it on save and create new
-			_editModeID = cursor.getInt(0);
+			_editModeID = cursor.getInt(idColumn);
 			
 			//display editing data
-			vtitle.setText(cursor.getString(1));
-			vmac.setText(cursor.getString(2));
-			vip.setText(cursor.getString(3));
-			vport.setText(cursor.getString(4));
+			vtitle.setText(cursor.getString(titleColumn));
+			vmac.setText(cursor.getString(macColumn));
+			vip.setText(cursor.getString(ipColumn));
+			vport.setText(cursor.getString(portColumn));
 
 			//change text on both our button's
 			Button saveEdit = (Button)findViewById(R.id.send_wake);
@@ -382,7 +385,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			
 		case R.id.menu_delete:
 			//use HistoryProvider to remove this row
-			Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(cursor.getInt(0)));
+			Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(cursor.getInt(idColumn)));
 			getContentResolver().delete(itemUri, null, null);
 			return true;
 
