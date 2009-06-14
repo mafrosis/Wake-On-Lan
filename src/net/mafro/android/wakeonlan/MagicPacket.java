@@ -11,6 +11,10 @@ import java.net.DatagramPacket;
 import java.net.SocketException;
 import java.lang.IllegalArgumentException;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+
 public class MagicPacket
 {
 	private static final String TAG = "MagicPacket";
@@ -26,23 +30,30 @@ public class MagicPacket
 
 	public static String send(String mac, String ip, int port) throws UnknownHostException, SocketException, IOException, IllegalArgumentException
 	{
-		String[] hex = validateMac(mac);
-		byte[] macBytes = convertToBytes(hex);
-		byte[] bytes = new byte[102];
+		//validate MAC and chop into array
+		final String[] hex = validateMac(mac);
+		
+		//convert to base16 bytes
+		final byte[] macBytes = new byte[6];
+		for(int i=0; i<6; i++) {
+			macBytes[i] = (byte) Integer.parseInt(hex[i], 16);
+		}
+		
+		final byte[] bytes = new byte[102];
 
 		//fill first 6 bytes
-		for (int i = 0; i < 6; i++) {
+		for(int i=0; i<6; i++) {
 			bytes[i] = (byte) 0xff;
 		}
 		//fill remaining bytes with target MAC
-		for (int i = 6; i < bytes.length; i += macBytes.length) {
+		for(int i=6; i<bytes.length; i+=macBytes.length) {
 			System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
 		}
 
 		//create socket to IP
-		InetAddress address = InetAddress.getByName(ip);
-		DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, PORT);
-		DatagramSocket socket = new DatagramSocket();
+		final InetAddress address = InetAddress.getByName(ip);
+		final DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, PORT);
+		final DatagramSocket socket = new DatagramSocket();
 		socket.send(packet);
 		socket.close();
 		
@@ -51,47 +62,25 @@ public class MagicPacket
 
 	public static String cleanMac(String mac) throws IllegalArgumentException
 	{
-		String[] hex = validateMac(mac);
+		final String[] hex = validateMac(mac);
 		return hex[0]+SEPARATOR+hex[1]+SEPARATOR+hex[2]+SEPARATOR+hex[3]+SEPARATOR+hex[4]+SEPARATOR+hex[5];
 	}
 	
 	private static String[] validateMac(String mac) throws IllegalArgumentException
 	{
-		String[] hex;
+		//error handle semi colons
+		mac = mac.replace(";", ":");
 		
-		if(mac.length() == 17) {
-			hex = mac.split("(\\:|\\-)");
-			if(hex.length != 6) {
-				throw new IllegalArgumentException("Invalid MAC address.");
-			}
-		}else if(mac.length() == 12) {
-			char[] chars;
-			hex = new String[6];
-			
-			for(int i=0; i<6; i++) {
-				chars = new char[2];
-				mac.getChars((i*2), (i*2)+2, chars, 0);
-				hex[i] = new String(chars);
-			}
+		//regexp pattern match a valid MAC address
+		final Pattern pat = Pattern.compile("((([0-9a-fA-F]){2}[-:]){5}([0-9a-fA-F]){2})");
+		final Matcher m = pat.matcher(mac);
+
+		if(m.find()) {
+			String result = m.group();
+			return result.split("(\\:|\\-)");
 		}else{
 			throw new IllegalArgumentException("Invalid MAC address.");
 		}
-		return hex;
-	}
-
-	private static byte[] convertToBytes(String[] hex) throws IllegalArgumentException
-	{
-		byte[] bytes = new byte[6];
-		
-		try {
-			for(int i=0; i<6; i++) {
-				bytes[i] = (byte) Integer.parseInt(hex[i], 16);
-			}
-			
-		}catch(NumberFormatException e) {
-			throw new IllegalArgumentException("Invalid hex digit in MAC address.");
-		}
-		return bytes;
 	}
 
 	public static void main(String[] args) {
