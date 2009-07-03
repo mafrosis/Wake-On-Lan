@@ -30,22 +30,30 @@ public class MagicPacket
 
 	public static String send(String mac, String ip, int port) throws UnknownHostException, SocketException, IOException, IllegalArgumentException
 	{
-		byte[] macBytes = validateMac(mac);
-		byte[] bytes = new byte[102];
+		//validate MAC and chop into array
+		final String[] hex = validateMac(mac);
+		
+		//convert to base16 bytes
+		final byte[] macBytes = new byte[6];
+		for(int i=0; i<6; i++) {
+			macBytes[i] = (byte) Integer.parseInt(hex[i], 16);
+		}
+		
+		final byte[] bytes = new byte[102];
 
 		//fill first 6 bytes
-		for (int i = 0; i < 6; i++) {
+		for(int i=0; i<6; i++) {
 			bytes[i] = (byte) 0xff;
 		}
 		//fill remaining bytes with target MAC
-		for (int i = 6; i < bytes.length; i += macBytes.length) {
+		for(int i=6; i<bytes.length; i+=macBytes.length) {
 			System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
 		}
 
 		//create socket to IP
-		InetAddress address = InetAddress.getByName(ip);
-		DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, PORT);
-		DatagramSocket socket = new DatagramSocket();
+		final InetAddress address = InetAddress.getByName(ip);
+		final DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, PORT);
+		final DatagramSocket socket = new DatagramSocket();
 		socket.send(packet);
 		socket.close();
 		
@@ -54,7 +62,7 @@ public class MagicPacket
 
 	public static String cleanMac(String mac) throws IllegalArgumentException
 	{
-		byte[] hex = validateMac(mac);
+		final String[] hex = validateMac(mac);
 		return hex[0]+SEPARATOR+hex[1]+SEPARATOR+hex[2]+SEPARATOR+hex[3]+SEPARATOR+hex[4]+SEPARATOR+hex[5];
 	}
 	
@@ -64,18 +72,12 @@ public class MagicPacket
 		mac = mac.replace(";", ":");
 		
 		//regexp pattern match a valid MAC address
-		Pattern pat = Pattern.compile("((([0-9a-fA-F]){2}[-:]){5}([0-9a-fA-F]){2})");
-		Matcher m = pat.matcher(mac);
+		final Pattern pat = Pattern.compile("((([0-9a-fA-F]){2}[-:]){5}([0-9a-fA-F]){2})");
+		final Matcher m = pat.matcher(mac);
 
 		if(m.find()) {
 			String result = m.group();
-			String hex[] = mac.split("(\\:|\\-)");
-			
-			byte[] bytes = new byte[6];
-			for(int i=0; i<6; i++) {
-				bytes[i] = (byte) Integer.parseInt(hex[i], 16);
-			}
-			return bytes;
+			return result.split("(\\:|\\-)");
 		}else{
 			throw new IllegalArgumentException("Invalid MAC address.");
 		}
