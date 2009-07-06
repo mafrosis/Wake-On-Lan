@@ -125,8 +125,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		long last_update = settings.getLong("last_update", 0);
 		long now = System.currentTimeMillis();
 		
-		Log.i(TAG+"Update", Long.toString(last_update));
-		Log.i(TAG+"Update", Long.toString(now-WEEK));
+		//Log.i(TAG+"Update", Long.toString(last_update));
+		//Log.i(TAG+"Update", Long.toString(now-WEEK));
 		
 		if((last_update == 0) || (last_update < now-WEEK)) {
 			Updater.checkForUpdates(this, handler);
@@ -171,7 +171,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 					formattedMac = MagicPacket.cleanMac(mac);
 
 				}catch(IllegalArgumentException iae) {
-					Log.e(TAG, iae.getMessage(), iae);
+					//Log.e(TAG, iae.getMessage(), iae);
 					notifyUser(iae.getMessage(), WakeOnLan.this);
 					return;
 				}
@@ -281,19 +281,19 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 	
 	private String sendPacket(String title, String mac, String ip, int port)
 	{
-		Log.i(TAG, mac+" "+ip+":"+Integer.toString(port));
+		//Log.i(TAG, mac+" "+ip+":"+Integer.toString(port));
 		String formattedMac = null;
 		
 		try {
 			formattedMac = MagicPacket.send(mac, ip, port);
 			
 		}catch(IllegalArgumentException iae) {
-			Log.e(TAG, "Sending Failed", iae);
+			//Log.e(TAG, "Sending Failed", iae);
 			notifyUser(getString(R.string.send_failed_en)+":\n"+iae.getMessage(), WakeOnLan.this);
 			return null;
 			
 		}catch(Exception e) {
-			Log.e(TAG, "Sending Failed", e);
+			//Log.e(TAG, "Sending Failed", e);
 			notifyUser(getString(R.string.send_failed_en), WakeOnLan.this);
 			return null;
 		}

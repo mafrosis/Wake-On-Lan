@@ -49,7 +49,7 @@ public class Updater extends Thread
 
 		String url = context.getString(R.string.version_url)+context.getPackageName();
 
-		Log.i(TAG, url);
+		//Log.i(TAG, url);
 
 		//retrieve current latest version number
 		HttpClient hc = new DefaultHttpClient();
@@ -67,8 +67,8 @@ public class Updater extends Thread
 
 		String currentVersion = getVersionNumber();
 
-		Log.i(TAG, "local: "+currentVersion);
-		Log.i(TAG, "remote: "+response);
+		//Log.i(TAG, "local: "+currentVersion);
+		//Log.i(TAG, "remote: "+response);
 
 		//compare version numbers
 		if(!currentVersion.equals(response)) {
@@ -91,15 +91,15 @@ public class Updater extends Thread
 			default: latest = 0;
 			}
 			
-			Log.i(TAG, Double.toString(current));
-			Log.i(TAG, Double.toString(latest));
+			//Log.i(TAG, Double.toString(current));
+			//Log.i(TAG, Double.toString(latest));
 			
 			if(Double.compare(latest, current) > 0) {
 				handler.sendEmptyMessage(0);
 			}
 		}
 
-		Log.i(TAG, "finished checking version");
+		//Log.i(TAG, "finished checking version");
 		running = false;
 	}
 
@@ -110,7 +110,7 @@ public class Updater extends Thread
 			PackageInfo pi = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
 			version = pi.versionName;
 		} catch (NameNotFoundException e) {
-			Log.e(TAG, "Package name not found", e);
+			//Log.e(TAG, "Package name not found", e);
 		};
 		return version;
 	}
