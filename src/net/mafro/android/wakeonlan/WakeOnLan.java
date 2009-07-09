@@ -30,6 +30,7 @@ import android.widget.Toast;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -46,7 +47,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 
-public class WakeOnLan extends TabActivity implements OnClickListener, OnItemClickListener, OnTabChangeListener, OnFocusChangeListener
+public class WakeOnLan extends TabActivity implements OnClickListener, OnItemClickListener, OnTabChangeListener, OnFocusChangeListener, OnCheckedChangeListener
 {
 
 	private static final String TAG = "WakeOnLan";
@@ -90,12 +91,14 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		//register self as tab changed listener
 		th.setOnTabChangedListener(this);
 
+
 		//set defaults on Wake tab
 		EditText vip = (EditText)findViewById(R.id.ip);
 		vip.setText(MagicPacket.BROADCAST);
 		EditText vport = (EditText)findViewById(R.id.port);
 		vport.setText(Integer.toString(MagicPacket.PORT));
-		
+
+
 		//register self as listener for wake button
 		Button sendWake = (Button)findViewById(R.id.send_wake);
 		sendWake.setOnClickListener(this);
@@ -105,7 +108,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		//register self as mac address field focus change listener
 		EditText vmac = (EditText)findViewById(R.id.mac);
 		vmac.setOnFocusChangeListener(this);
-		
+
+
 		//load History list
 		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, null);
 
@@ -119,6 +123,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		
 		//set self as context menu listener
 		registerForContextMenu(lvHistory);
+
 
 		//check for updates
 		SharedPreferences settings = getSharedPreferences(TAG, 0);

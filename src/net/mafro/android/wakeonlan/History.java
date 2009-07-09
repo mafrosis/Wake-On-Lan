@@ -27,6 +27,5 @@ public final class History {
 		public static final String PORT = "port";
 		public static final String CREATED_DATE = "created";
 		public static final String LAST_USED_DATE = "last_used";
-		
 	}
 }
