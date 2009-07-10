@@ -147,8 +147,16 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			
 			String title = vtitle.getText().toString();
 			String mac = vmac.getText().toString();
-			String ip = vip.getText().toString();
-			int port = Integer.valueOf(vport.getText().toString());
+
+			//default IP and port unless set on form
+			String ip = MagicPacket.BROADCAST;
+			if(!vip.getText().toString().equals("")) {
+				ip = vip.getText().toString();
+			}
+			int port = MagicPacket.PORT;
+			if(!vport.getText().toString().equals("")) {
+				port = Integer.valueOf(vport.getText().toString());
+			}
 
 			//check for edit mode - no send of packet
 			if(_editModeID == 0) {
