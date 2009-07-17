@@ -224,15 +224,17 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 
 	public void onItemClick(AdapterView parent, View v, int position, long id)
 	{
-		//move bound cursor to item that was clicked
-		cursor.moveToPosition(position);
+		if(position >= 0) {
+			//extract position of clicked item
+            Cursor cursor = (Cursor) parent.getItemAtPosition(position);
 
-		int titleColumn = cursor.getColumnIndex(History.Items.TITLE);
-		int macColumn = cursor.getColumnIndex(History.Items.MAC);
-		int ipColumn = cursor.getColumnIndex(History.Items.IP);
-		int portColumn = cursor.getColumnIndex(History.Items.PORT);
+			int titleColumn = cursor.getColumnIndex(History.Items.TITLE);
+			int macColumn = cursor.getColumnIndex(History.Items.MAC);
+			int ipColumn = cursor.getColumnIndex(History.Items.IP);
+			int portColumn = cursor.getColumnIndex(History.Items.PORT);
 
-		sendPacket(cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+			sendPacket(cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+        }
 	}
 
 	public void onTabChanged(String tabId)
