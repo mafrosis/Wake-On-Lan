@@ -51,7 +51,7 @@ public class StarButton extends CompoundButton implements OnCheckedChangeListene
 		render();
 	}
 
-	private void render()
+	public void render()
 	{
 		//render the icon on this button
 		if(isChecked() == true) {

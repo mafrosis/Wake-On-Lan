@@ -30,7 +30,6 @@ import android.widget.Toast;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -46,8 +45,10 @@ import android.net.Uri;
 
 import android.provider.BaseColumns;
 
+import net.mafro.android.widget.HistoryListItemAdapter;
 
-public class WakeOnLan extends TabActivity implements OnClickListener, OnItemClickListener, OnTabChangeListener, OnFocusChangeListener, OnCheckedChangeListener
+
+public class WakeOnLan extends TabActivity implements OnClickListener, OnItemClickListener, OnTabChangeListener, OnFocusChangeListener
 {
 
 	private static final String TAG = "WakeOnLan";
@@ -113,7 +114,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		//load History list
 		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, null);
 
-		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.history_row, cursor, new String[] { History.Items.TITLE, History.Items.MAC, History.Items.IP, History.Items.PORT }, new int[] { R.id.history_row_title, R.id.history_row_mac, R.id.history_row_ip, R.id.history_row_port });
+		//SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.history_row, cursor, new String[] { History.Items.TITLE, History.Items.MAC, History.Items.IP, History.Items.PORT }, new int[] { R.id.history_row_title, R.id.history_row_mac, R.id.history_row_ip, R.id.history_row_port });
+
+		HistoryListItemAdapter adapter = new HistoryListItemAdapter(this, cursor);
 
 		ListView lvHistory = (ListView)findViewById(R.id.history);
 		lvHistory.setAdapter(adapter);
