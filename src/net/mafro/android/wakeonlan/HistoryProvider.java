@@ -131,19 +131,19 @@ public class HistoryProvider extends ContentProvider {
 		// Make sure that the fields are all set
 		if(values.containsKey(History.Items.TITLE) == false) {
 			Resources r = Resources.getSystem();
-			values.put(History.Items.TITLE, r.getString(android.R.string.untitled));
+			values.put(History.Items.TITLE, "");
 		}
 		if(values.containsKey(History.Items.MAC) == false) {
 			Resources r = Resources.getSystem();
-			values.put(History.Items.MAC, r.getString(android.R.string.untitled));
+			values.put(History.Items.MAC, "");
 		}
 		if(values.containsKey(History.Items.IP) == false) {
 			Resources r = Resources.getSystem();
-			values.put(History.Items.IP, r.getString(android.R.string.untitled));
+			values.put(History.Items.IP, "");
 		}
 		if(values.containsKey(History.Items.PORT) == false) {
 			Resources r = Resources.getSystem();
-			values.put(History.Items.PORT, r.getString(android.R.string.untitled));
+			values.put(History.Items.PORT, "");
 		}
 		if(values.containsKey(History.Items.CREATED_DATE) == false) {
 			values.put(History.Items.CREATED_DATE, now);
