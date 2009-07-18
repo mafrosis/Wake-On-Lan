@@ -69,7 +69,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		History.Items.TITLE,
 		History.Items.MAC,
 		History.Items.IP,
-		History.Items.PORT
+		History.Items.PORT,
+		History.Items.LAST_USED_DATE,
+		History.Items.USED_COUNT
     };
 	
 	private static Toast notification;
@@ -241,7 +243,12 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			int ipColumn = cursor.getColumnIndex(History.Items.IP);
 			int portColumn = cursor.getColumnIndex(History.Items.PORT);
 
-			sendPacket(cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+			String mac = sendPacket(cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+
+			//update used count in DB
+			if(mac != null) {
+				updateHistory(id);
+			}
         }
 	}
 
@@ -316,10 +323,12 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			return null;
 		}
 		
+		//display sent message to user
 		notifyUser(getString(R.string.packet_sent_en)+" to "+title, WakeOnLan.this);
 		return formattedMac;
 	}
-	
+
+
 	private void addToHistory(String title, String mac, String ip, int port, boolean force)
 	{
 		boolean create = force;
@@ -354,6 +363,19 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			getContentResolver().insert(History.Items.CONTENT_URI, values);
 		}
 	}
+	
+	private void updateHistory(long id)
+	{
+		int usedCountColumn = cursor.getColumnIndex(History.Items.USED_COUNT);
+		int usedCount = cursor.getInt(usedCountColumn);
+		
+		ContentValues values = new ContentValues(1);
+		values.put(History.Items.USED_COUNT, usedCount+1);
+		
+		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Long.toString(id));
+		getContentResolver().update(itemUri, values, null, null);
+	}
+	
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
@@ -380,7 +402,12 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		
 		switch (item.getItemId()) {
 		case R.id.menu_wake:
-			sendPacket(cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+			String mac = sendPacket(cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+			
+			//update used count in DB
+			if(mac != null) {
+				updateHistory(cursor.getInt(idColumn));
+			}
 			return true;
 			
 		case R.id.menu_edit:

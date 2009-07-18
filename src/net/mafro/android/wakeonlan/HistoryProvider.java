@@ -27,7 +27,7 @@ public class HistoryProvider extends ContentProvider {
 	private static final String TAG = "HistoryProvider";
 
 	private static final String DATABASE_NAME = "wakeonlan_history.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
     private static HashMap<String, String> sHistoryProjectionMap;
 	
@@ -56,14 +56,17 @@ public class HistoryProvider extends ContentProvider {
                     + History.Items.IP + " TEXT,"
                     + History.Items.PORT + " INTEGER,"
                     + History.Items.CREATED_DATE + " INTEGER,"
-                    + History.Items.LAST_USED_DATE + " INTEGER"
+                    + History.Items.LAST_USED_DATE + " INTEGER,"
+					+ History.Items.USED_COUNT + " INTEGER"
                     + ");");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS notes");
-            onCreate(db);
+			if((oldVersion == 1) && (newVersion == 2)) {
+            	db.execSQL("ALTER TABLE history ADD COLUMN "
+					+ History.Items.USED_COUNT + " INTEGER DEFAULT 1");
+			}
         }
     }
 
@@ -151,8 +154,12 @@ public class HistoryProvider extends ContentProvider {
 		if(values.containsKey(History.Items.LAST_USED_DATE) == false) {
 			values.put(History.Items.LAST_USED_DATE, now);
 		}
+		if(values.containsKey(History.Items.USED_COUNT) == false) {
+			values.put(History.Items.USED_COUNT, 1);
+		}
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+		
 		//insert record, 2nd param is NULLABLE field for if values is empty
 		long rowId = db.insert(HISTORY_TABLE_NAME, History.Items.MAC, values);
 		if (rowId > 0) {
@@ -191,6 +198,11 @@ public class HistoryProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
+		//default last used date to now
+		if(values.containsKey(History.Items.LAST_USED_DATE) == false) {
+			values.put(History.Items.LAST_USED_DATE, Long.valueOf(System.currentTimeMillis()));
+		}
+
         int count;
         switch (sUriMatcher.match(uri)) {
         case HISTORY:
@@ -223,6 +235,7 @@ public class HistoryProvider extends ContentProvider {
 		sHistoryProjectionMap.put(History.Items.PORT, History.Items.PORT);
 		sHistoryProjectionMap.put(History.Items.CREATED_DATE, History.Items.CREATED_DATE);
 		sHistoryProjectionMap.put(History.Items.LAST_USED_DATE, History.Items.LAST_USED_DATE);
+		sHistoryProjectionMap.put(History.Items.USED_COUNT, History.Items.USED_COUNT);
     }
 
 }
