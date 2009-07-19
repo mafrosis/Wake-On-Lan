@@ -71,7 +71,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		History.Items.IP,
 		History.Items.PORT,
 		History.Items.LAST_USED_DATE,
-		History.Items.USED_COUNT
+		History.Items.USED_COUNT,
+		History.Items.IS_STARRED
     };
 	
 	private static Toast notification;
@@ -115,9 +116,6 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 
 		//load History list
 		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, null);
-
-		//SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.history_row, cursor, new String[] { History.Items.TITLE, History.Items.MAC, History.Items.IP, History.Items.PORT }, new int[] { R.id.history_row_title, R.id.history_row_mac, R.id.history_row_ip, R.id.history_row_port });
-
 		HistoryListItemAdapter adapter = new HistoryListItemAdapter(this, cursor);
 
 		ListView lvHistory = (ListView)findViewById(R.id.history);

@@ -28,5 +28,6 @@ public final class History {
 		public static final String CREATED_DATE = "created";
 		public static final String LAST_USED_DATE = "last_used";
 		public static final String USED_COUNT = "used_count";
+		public static final String IS_STARRED = "is_starred";
 	}
 }

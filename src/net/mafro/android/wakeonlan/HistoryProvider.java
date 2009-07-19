@@ -57,15 +57,16 @@ public class HistoryProvider extends ContentProvider {
                     + History.Items.PORT + " INTEGER,"
                     + History.Items.CREATED_DATE + " INTEGER,"
                     + History.Items.LAST_USED_DATE + " INTEGER,"
-					+ History.Items.USED_COUNT + " INTEGER"
+					+ History.Items.USED_COUNT + " INTEGER DEFAULT 1,"
+					+ History.Items.IS_STARRED + " INTEGER DEFAULT 0"
                     + ");");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			if((oldVersion == 1) && (newVersion == 2)) {
-            	db.execSQL("ALTER TABLE history ADD COLUMN "
-					+ History.Items.USED_COUNT + " INTEGER DEFAULT 1");
+            	db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.USED_COUNT + " INTEGER DEFAULT 1;");
+            	db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.IS_STARRED + " INTEGER DEFAULT 0;");
 			}
         }
     }
@@ -154,9 +155,6 @@ public class HistoryProvider extends ContentProvider {
 		if(values.containsKey(History.Items.LAST_USED_DATE) == false) {
 			values.put(History.Items.LAST_USED_DATE, now);
 		}
-		if(values.containsKey(History.Items.USED_COUNT) == false) {
-			values.put(History.Items.USED_COUNT, 1);
-		}
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		
@@ -236,6 +234,7 @@ public class HistoryProvider extends ContentProvider {
 		sHistoryProjectionMap.put(History.Items.CREATED_DATE, History.Items.CREATED_DATE);
 		sHistoryProjectionMap.put(History.Items.LAST_USED_DATE, History.Items.LAST_USED_DATE);
 		sHistoryProjectionMap.put(History.Items.USED_COUNT, History.Items.USED_COUNT);
+		sHistoryProjectionMap.put(History.Items.IS_STARRED, History.Items.IS_STARRED);
     }
 
 }

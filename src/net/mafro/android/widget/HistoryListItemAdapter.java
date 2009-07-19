@@ -7,6 +7,10 @@ import android.content.ContentResolver;
 
 import android.database.Cursor;
 
+import android.content.ContentValues;
+
+import android.net.Uri;
+
 import android.util.Log;
 
 import android.view.View;
@@ -50,6 +54,7 @@ public class HistoryListItemAdapter extends ResourceCursorAdapter implements OnC
 		int macColumn = cursor.getColumnIndex(History.Items.MAC);
 		int ipColumn = cursor.getColumnIndex(History.Items.IP);
 		int portColumn = cursor.getColumnIndex(History.Items.PORT);
+		int isStarredColumn = cursor.getColumnIndex(History.Items.IS_STARRED);
 
 		Log.d(TAG+":bindView", Integer.toString(cursor.getInt(idColumn)));
 
@@ -65,26 +70,43 @@ public class HistoryListItemAdapter extends ResourceCursorAdapter implements OnC
 		vip.setText(cursor.getString(ipColumn));
 		vport.setText(Integer.toString(cursor.getInt(portColumn)));
 
-		star.setTag(cursor.getInt(idColumn));
+		//remove click handler to prevent recursive calls
+		star.setOnCheckedChangeListener(null);
+
+		//change the star state if different
+		boolean starred = (cursor.getInt(isStarredColumn) != 0);	//non-zero == true
+		star.setChecked(starred);
+		star.render();
 
 		//add event listener to star button
 		star.setOnCheckedChangeListener(this);
+
+		//save our record _ID in the star's tag
+		star.setTag(cursor.getInt(idColumn));
 	}
 
 	
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 	{
-		//extract tag getting items _ID
-		Log.d(TAG+":bindView", "================== "+((StarButton) buttonView).getTag());
+		//extract record's _ID from tag
+		int id = ((Integer) ((StarButton) buttonView).getTag()).intValue();
 
 		if(isChecked) {
-			Log.d(TAG+":bindView", "true");
+			Log.d(TAG+":onCheckedChanged", Integer.toString(id)+" true");
+			setIsStarred(id, 1);
 		}else{
-			Log.d(TAG+":bindView", "false");
+			Log.d(TAG+":onCheckedChanged", Integer.toString(id)+" false");
+			setIsStarred(id, 0);
 		}
+	}
 
-		//change UI on button
-		((StarButton) buttonView).render();
+	private void setIsStarred(int id, int value) {
+		//update history setting is_starred to value
+		ContentValues values = new ContentValues(1);
+		values.put(History.Items.IS_STARRED, value);
+		
+		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(id));
+		this.content.update(itemUri, values, null, null);
 	}
 
 }
