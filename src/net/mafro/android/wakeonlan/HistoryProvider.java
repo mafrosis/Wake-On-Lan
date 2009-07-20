@@ -196,11 +196,6 @@ public class HistoryProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
-		//default last used date to now
-		if(values.containsKey(History.Items.LAST_USED_DATE) == false) {
-			values.put(History.Items.LAST_USED_DATE, Long.valueOf(System.currentTimeMillis()));
-		}
-
         int count;
         switch (sUriMatcher.match(uri)) {
         case HISTORY:

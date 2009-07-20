@@ -369,6 +369,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		
 		ContentValues values = new ContentValues(1);
 		values.put(History.Items.USED_COUNT, usedCount+1);
+		values.put(History.Items.LAST_USED_DATE, Long.valueOf(System.currentTimeMillis()));
 		
 		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Long.toString(id));
 		getContentResolver().update(itemUri, values, null, null);
