@@ -74,6 +74,11 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		History.Items.USED_COUNT,
 		History.Items.IS_STARRED
     };
+
+	private static final int CREATED = 0;
+	private static final int LAST_USED = 1;
+	private static final int USED_COUNT = 2;
+	private static int sort_mode;
 	
 	private static Toast notification;
 	
@@ -143,7 +148,67 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			editor.putLong("last_update", now);
 			editor.commit();
 		}
+
+		//load our sort mode
+		sort_mode = settings.getInt("sort_mode", CREATED);
     }
+
+
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
+		
+		//set the checked property on our initial item
+		MenuItem mi;
+
+		switch (sort_mode) {
+		case CREATED:
+			mi = (MenuItem) menu.findItem(R.id.menu_created);
+			mi.setChecked(true);
+			break;
+		case LAST_USED:
+			mi = (MenuItem) menu.findItem(R.id.menu_lastused);
+			mi.setChecked(true);
+			break;
+		case USED_COUNT:
+			mi = (MenuItem) menu.findItem(R.id.menu_usedcount);
+			mi.setChecked(true);
+			break;
+		}
+		return true;
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		SharedPreferences settings = getSharedPreferences(TAG, 0);
+		SharedPreferences.Editor editor = settings.edit();
+
+		//save our altered sort mode to preferences & toggle the menuitems
+		switch (item.getItemId()) {
+		case R.id.menu_created:
+			editor.putInt("sort_mode", CREATED);
+			editor.commit();
+
+			item.setChecked(true);
+			return true;
+
+		case R.id.menu_lastused:
+			editor.putInt("sort_mode", LAST_USED);
+			editor.commit();
+
+			item.setChecked(true);
+			return true;
+		
+		case R.id.menu_usedcount:
+			editor.putInt("sort_mode", USED_COUNT);
+			editor.commit();
+
+			item.setChecked(true);
+			return true;
+		}
+		return false;
+	}
+
 
 	public void onClick(View v)
 	{
@@ -445,6 +510,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			return super.onContextItemSelected(item);
 		}
 	}
+
 
 	public static void notifyUser(String message, Context context)
 	{
