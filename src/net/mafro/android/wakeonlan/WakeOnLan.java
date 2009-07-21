@@ -150,13 +150,13 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		String orderBy = null;
 		switch (sort_mode) {
 		case CREATED:
-			orderBy = "created DESC";
+			orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.CREATED_DATE+" DESC";
 			break;
 		case LAST_USED:
-			orderBy = "last_used DESC";
+			orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.LAST_USED_DATE+" DESC";
 			break;
 		case USED_COUNT:
-			orderBy = "used_count DESC";
+			orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.USED_COUNT+" DESC";
 			break;
 		}
 
