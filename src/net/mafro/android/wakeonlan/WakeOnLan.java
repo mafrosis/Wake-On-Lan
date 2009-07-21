@@ -61,7 +61,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 	private static int _editModeID = 0;
 	private static boolean typingMode = false;
 	
-	private Cursor cursor;	//main history cursor
+	private Cursor cursor;
+	private HistoryListItemAdapter adapter;
 
     private static final String[] PROJECTION = new String[]
 	{
@@ -119,20 +120,6 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		vmac.setOnFocusChangeListener(this);
 
 
-		//load History list
-		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, null);
-		HistoryListItemAdapter adapter = new HistoryListItemAdapter(this, cursor);
-
-		ListView lvHistory = (ListView)findViewById(R.id.history);
-		lvHistory.setAdapter(adapter);
-
-		//register self as listener for item clicks
-		lvHistory.setOnItemClickListener(this);
-		
-		//set self as context menu listener
-		registerForContextMenu(lvHistory);
-
-
 		//check for updates
 		SharedPreferences settings = getSharedPreferences(TAG, 0);
 		long last_update = settings.getLong("last_update", 0);
@@ -151,7 +138,41 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 
 		//load our sort mode
 		sort_mode = settings.getInt("sort_mode", CREATED);
+
+
+		//load cursor, bind to history adapter, set listeners
+		bindHistoryList(sort_mode);
     }
+
+
+	private void bindHistoryList(int sort_mode)
+	{
+		String orderBy = null;
+		switch (sort_mode) {
+		case CREATED:
+			orderBy = "created DESC";
+			break;
+		case LAST_USED:
+			orderBy = "last_used DESC";
+			break;
+		case USED_COUNT:
+			orderBy = "used_count DESC";
+			break;
+		}
+
+		//load History list
+		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, orderBy);
+		adapter = new HistoryListItemAdapter(this, cursor);
+
+		ListView lvHistory = (ListView)findViewById(R.id.history);
+		lvHistory.setAdapter(adapter);
+
+		//register self as listener for item clicks
+		lvHistory.setOnItemClickListener(this);
+
+		//set self as context menu listener
+		registerForContextMenu(lvHistory);
+	}
 
 
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -159,54 +180,52 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
 		
-		//set the checked property on our initial item
-		MenuItem mi;
+		MenuItem mi = null;
 
 		switch (sort_mode) {
 		case CREATED:
 			mi = (MenuItem) menu.findItem(R.id.menu_created);
-			mi.setChecked(true);
 			break;
 		case LAST_USED:
 			mi = (MenuItem) menu.findItem(R.id.menu_lastused);
-			mi.setChecked(true);
 			break;
 		case USED_COUNT:
 			mi = (MenuItem) menu.findItem(R.id.menu_usedcount);
-			mi.setChecked(true);
 			break;
 		}
+
+		//toggle menuitem
+		mi.setChecked(true);
 		return true;
 	}
 
-	public boolean onOptionsItemSelected(MenuItem item) {
-		SharedPreferences settings = getSharedPreferences(TAG, 0);
-		SharedPreferences.Editor editor = settings.edit();
-
-		//save our altered sort mode to preferences & toggle the menuitems
-		switch (item.getItemId()) {
+	public boolean onOptionsItemSelected(MenuItem mi)
+	{
+		switch (mi.getItemId()) {
 		case R.id.menu_created:
-			editor.putInt("sort_mode", CREATED);
-			editor.commit();
-
-			item.setChecked(true);
-			return true;
-
+			sort_mode = CREATED;
+			break;
 		case R.id.menu_lastused:
-			editor.putInt("sort_mode", LAST_USED);
-			editor.commit();
-
-			item.setChecked(true);
-			return true;
-		
+			sort_mode = LAST_USED;
+			break;
 		case R.id.menu_usedcount:
-			editor.putInt("sort_mode", USED_COUNT);
-			editor.commit();
-
-			item.setChecked(true);
-			return true;
+			sort_mode = USED_COUNT;
+			break;
+		case R.id.menu_sortby:
+			return false;
 		}
-		return false;
+
+		//toggle menuitem
+		mi.setChecked(true);
+
+		//save to preferences
+		SharedPreferences.Editor editor = getSharedPreferences(TAG, 0).edit();
+		editor.putInt("sort_mode", sort_mode);
+		editor.commit();
+
+		//rebind the history list
+		bindHistoryList(sort_mode);
+		return true;
 	}
 
 
