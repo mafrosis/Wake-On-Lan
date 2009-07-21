@@ -16,8 +16,8 @@
 	<string name="menu_edit_en">Edit</string>
     <string name="menu_delete_en">Remove</string>
     <string name="menu_sortby_en">Sort By</string>
-    <string name="menu_lastused_en">Recently Used</string>
-    <string name="menu_usedcount_en">Times Used</string>
+    <string name="menu_lastused_en">Recent</string>
+    <string name="menu_usedcount_en">Frequent</string>
 	<string name="menu_created_en">Created</string>
 	<string name="version_url">http://android.mafro.net/versions.php?app=</string>
 	<string name="market_url">market://search?q=pname:</string>
