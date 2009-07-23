@@ -255,7 +255,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 				//send the magic packet
 				String formattedMac = sendPacket(title, mac, ip, port);
 
-				//on succesful send, add to history list
+				//on successful send, add to history list
 				if(formattedMac != null) {
 					addToHistory(title, formattedMac, ip, port, false);
 				}else{
@@ -385,7 +385,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			}
 		}
 	}
-	
+
+
 	private String sendPacket(String title, String mac, String ip, int port)
 	{
 		//Log.i(TAG, mac+" "+ip+":"+Integer.toString(port));
@@ -445,7 +446,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			getContentResolver().insert(History.Items.CONTENT_URI, values);
 		}
 	}
-	
+
 	private void updateHistory(long id)
 	{
 		int usedCountColumn = cursor.getColumnIndex(History.Items.USED_COUNT);
@@ -458,7 +459,14 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Long.toString(id));
 		getContentResolver().update(itemUri, values, null, null);
 	}
-	
+
+	private void deleteHistory(int id)
+	{
+		//use HistoryProvider to remove this row
+		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(id));
+		getContentResolver().delete(itemUri, null, null);
+	}
+
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
@@ -520,9 +528,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			return true;
 			
 		case R.id.menu_delete:
-			//use HistoryProvider to remove this row
-			Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(cursor.getInt(idColumn)));
-			getContentResolver().delete(itemUri, null, null);
+			deleteHistory(cursor.getInt(idColumn));
 			return true;
 
 		default:
