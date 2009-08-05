@@ -51,7 +51,7 @@ import net.mafro.android.widget.HistoryListItemAdapter;
 public class WakeOnLan extends TabActivity implements OnClickListener, OnItemClickListener, OnTabChangeListener, OnFocusChangeListener
 {
 
-	private static final String TAG = "WakeOnLan";
+	public static final String TAG = "WakeOnLan";
 	
     public static final int MENU_ITEM_WAKE = Menu.FIRST;
     public static final int MENU_ITEM_DELETE = Menu.FIRST + 1;
@@ -120,20 +120,33 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		vmac.setOnFocusChangeListener(this);
 
 
-		//check for updates
+		//preferences
 		SharedPreferences settings = getSharedPreferences(TAG, 0);
-		long last_update = settings.getLong("last_update", 0);
-		long now = System.currentTimeMillis();
+		SharedPreferences.Editor editor;
 		
-		//Log.i(TAG+"Update", Long.toString(last_update));
-		//Log.i(TAG+"Update", Long.toString(now-WEEK));
-		
-		if((last_update == 0) || (last_update < now-WEEK)) {
-			Updater.checkForUpdates(this, handler);
-			
-			SharedPreferences.Editor editor = settings.edit();
-			editor.putLong("last_update", now);
+		if(settings.contains("check_for_update") == false) {
+			//default check_for_update pref to true on first run
+			editor = settings.edit();
+			editor.putBoolean("check_for_update", true);
 			editor.commit();
+
+		}else{
+			//check for updates
+			if(settings.getBoolean("check_for_update", true) == true) {
+				long last_update = settings.getLong("last_update", 0);
+				long now = System.currentTimeMillis();
+				
+				//Log.i(TAG+"Update", Long.toString(last_update));
+				//Log.i(TAG+"Update", Long.toString(now-WEEK));
+				
+				if((last_update == 0) || (last_update < now-WEEK)) {
+					Updater.checkForUpdates(this, handler);
+					
+					editor = settings.edit();
+					editor.putLong("last_update", now);
+					editor.commit();
+				}
+			}
 		}
 
 		//load our sort mode
@@ -212,6 +225,11 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			sort_mode = USED_COUNT;
 			break;
 		case R.id.menu_sortby:
+			return false;
+		case R.id.menu_settings:
+			//display settings Activity
+			Intent settings = new Intent(this, Settings.class);
+			startActivity(settings);
 			return false;
 		}
 

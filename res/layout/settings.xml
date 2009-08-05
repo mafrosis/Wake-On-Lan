@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory
+		android:title="@string/menu_settings_en"> 
+
+		<CheckBoxPreference
+			android:key="check_for_update"
+			android:title="@string/check_for_updates_en"
+			android:summary="@string/check_for_updates_desc_en"
+			android:persistent="true" />
+
+	</PreferenceCategory>
+
+</PreferenceScreen>

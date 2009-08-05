@@ -15,4 +15,8 @@
 			</group>
 		</menu>
 	</item>
+	<item android:id="@+id/menu_settings"
+		android:title="@string/menu_settings_en"
+		android:icon="@drawable/settings">
+	</item>
 </menu>

@@ -19,6 +19,7 @@
     <string name="menu_lastused_en">Recent</string>
     <string name="menu_usedcount_en">Frequent</string>
 	<string name="menu_created_en">Created</string>
+	<string name="menu_settings_en">Settings</string>
 	<string name="version_url">http://android.mafro.net/versions.php?app=</string>
 	<string name="market_url">market://search?q=pname:</string>
 	<string name="yes_en">Yes</string>
@@ -26,6 +27,8 @@
 	<string name="invalid_mac_en">Invalid MAC Address</string>
 	<string name="send_failed_en">Sending Failed</string>
 	<string name="packet_sent_en">Magic Packet sent</string>
+	<string name="check_for_updates_en">Check For Updates</string>
+	<string name="check_for_updates_desc_en">Do you want to check for a new version each week?</string>
 	<string name="update_available_en">Update Available</string>
 	<string name="install_latest_question_en">Do you want to install the latest version?</string>
 </resources>
