@@ -54,7 +54,7 @@ public class HistoryListItemAdapter extends ResourceCursorAdapter implements OnC
 		int portColumn = cursor.getColumnIndex(History.Items.PORT);
 		int isStarredColumn = cursor.getColumnIndex(History.Items.IS_STARRED);
 
-		Log.d(TAG+":bindView", Integer.toString(cursor.getInt(idColumn)));
+		//Log.d(TAG+":bindView", Integer.toString(cursor.getInt(idColumn)));
 
 		TextView vtitle = (TextView) view.findViewById(R.id.history_row_title);
 		TextView vmac = (TextView) view.findViewById(R.id.history_row_mac);
@@ -90,10 +90,8 @@ public class HistoryListItemAdapter extends ResourceCursorAdapter implements OnC
 		int id = ((Integer) ((StarButton) buttonView).getTag()).intValue();
 
 		if(isChecked) {
-			Log.d(TAG+":onCheckedChanged", Integer.toString(id)+" true");
 			setIsStarred(id, 1);
 		}else{
-			Log.d(TAG+":onCheckedChanged", Integer.toString(id)+" false");
 			setIsStarred(id, 0);
 		}
 	}
