@@ -45,8 +45,6 @@ import android.net.Uri;
 
 import android.provider.BaseColumns;
 
-import net.mafro.android.widget.HistoryListItemAdapter;
-
 
 public class WakeOnLan extends TabActivity implements OnClickListener, OnItemClickListener, OnTabChangeListener, OnFocusChangeListener
 {
@@ -93,8 +91,8 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		//configure tabs
 		TabHost th = getTabHost();
 
-		th.addTab(th.newTabSpec("tab_history").setIndicator(getString(R.string.tab_history_en), getResources().getDrawable(R.drawable.ical)).setContent(R.id.historyview));
-		th.addTab(th.newTabSpec("tab_wake").setIndicator(getString(R.string.tab_wake_en), getResources().getDrawable(R.drawable.wake)).setContent(R.id.wakeview));
+		th.addTab(th.newTabSpec("tab_history").setIndicator(getString(R.string.tab_history), getResources().getDrawable(R.drawable.ical)).setContent(R.id.historyview));
+		th.addTab(th.newTabSpec("tab_wake").setIndicator(getString(R.string.tab_wake), getResources().getDrawable(R.drawable.wake)).setContent(R.id.wakeview));
 		
 		th.setCurrentTab(0);
 
@@ -374,9 +372,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 
 				//reset both our button's text
 				Button sendWake = (Button)findViewById(R.id.send_wake);
-				sendWake.setText(R.string.button_wake_en);
+				sendWake.setText(R.string.button_wake);
 				Button clearWake = (Button)findViewById(R.id.clear_wake);
-				clearWake.setText(R.string.button_clear_en);
+				clearWake.setText(R.string.button_clear);
 			}
 		}
 	}
@@ -397,7 +395,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 				vmac.setError(null);
 
 			}catch(IllegalArgumentException iae) {
-				vmac.setError(getString(R.string.invalid_mac_en));
+				vmac.setError(getString(R.string.invalid_mac));
 			}
 		}
 	}
@@ -413,17 +411,17 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			
 		}catch(IllegalArgumentException iae) {
 			//Log.e(TAG, "Sending Failed", iae);
-			notifyUser(getString(R.string.send_failed_en)+":\n"+iae.getMessage(), WakeOnLan.this);
+			notifyUser(getString(R.string.send_failed)+":\n"+iae.getMessage(), WakeOnLan.this);
 			return null;
 			
 		}catch(Exception e) {
 			//Log.e(TAG, "Sending Failed", e);
-			notifyUser(getString(R.string.send_failed_en), WakeOnLan.this);
+			notifyUser(getString(R.string.send_failed), WakeOnLan.this);
 			return null;
 		}
 		
 		//display sent message to user
-		notifyUser(getString(R.string.packet_sent_en)+" to "+title, WakeOnLan.this);
+		notifyUser(getString(R.string.packet_sent)+" to "+title, WakeOnLan.this);
 		return formattedMac;
 	}
 
@@ -544,9 +542,9 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 
 			//change text on both our buttons
 			Button saveEdit = (Button)findViewById(R.id.send_wake);
-			saveEdit.setText(R.string.button_save_en);
+			saveEdit.setText(R.string.button_save);
 			Button cancelEdit = (Button)findViewById(R.id.clear_wake);
-			cancelEdit.setText(R.string.button_cancel_en);
+			cancelEdit.setText(R.string.button_cancel);
 			
 			TabHost th = getTabHost();
 			th.setCurrentTab(1);
@@ -580,10 +578,10 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		public void handleMessage(Message msg) {
 			//prompt user for action
 			new AlertDialog.Builder(WakeOnLan.this)
-				.setTitle(getString(R.string.update_available_en))
-				.setMessage(getString(R.string.install_latest_question_en))
+				.setTitle(getString(R.string.update_available))
+				.setMessage(getString(R.string.install_latest_question))
 				.setIcon(R.drawable.icon)
-				.setPositiveButton(R.string.yes_en, new DialogInterface.OnClickListener() {
+				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int whichButton) {
 						//if version numbers don't match then open Market application
@@ -591,7 +589,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 						startActivity(market);
 					}
 
-			}).setNegativeButton(R.string.no_en, new DialogInterface.OnClickListener() {
+			}).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {}
 			}).show();
 		}

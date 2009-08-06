@@ -44,7 +44,7 @@
 					<TextView 
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
-						android:text="@string/title_en" />
+						android:text="@string/title" />
 					<EditText 
 						android:id="@+id/title"
 						android:layout_width="fill_parent"
@@ -53,7 +53,7 @@
 					<TextView 
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
-						android:text="@string/mac_en" />
+						android:text="@string/mac" />
 					<EditText 
 						android:id="@+id/mac"
 						android:layout_width="fill_parent"
@@ -62,7 +62,7 @@
 					<TextView 
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
-						android:text="@string/ip_en" />
+						android:text="@string/ip" />
 					<EditText 
 						android:id="@+id/ip"
 						android:layout_width="fill_parent"
@@ -71,7 +71,7 @@
 					<TextView 
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
-						android:text="@string/port_en" />
+						android:text="@string/port" />
 					<EditText 
 						android:id="@+id/port"
 						android:layout_width="fill_parent"
@@ -88,14 +88,14 @@
 							android:layout_width="wrap_content" 
 							android:layout_height="wrap_content" 
 							android:layout_gravity="left"
-							android:text="@string/button_clear_en" />
+							android:text="@string/button_clear" />
 						<Button
 							android:id="@+id/send_wake"
 							android:layout_width="wrap_content" 
 							android:layout_height="wrap_content" 
 							android:layout_weight="1"
 							android:layout_gravity="right"
-							android:text="@string/button_wake_en" />
+							android:text="@string/button_wake" />
 					</LinearLayout>
 
 				</LinearLayout>

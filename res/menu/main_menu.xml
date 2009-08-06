@@ -1,22 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+id/menu_sortby"
-		android:title="@string/menu_sortby_en"
+		android:title="@string/menu_sortby"
 		android:icon="@drawable/sortby">
 		<menu>
 			<group android:id="@+id/menu_sortby_group"
 				android:checkableBehavior="single">
 
 				<item android:id="@+id/menu_created"
-					android:title="@string/menu_created_en" />
+					android:title="@string/menu_created" />
 				<item android:id="@+id/menu_lastused"
-					android:title="@string/menu_lastused_en" />
+					android:title="@string/menu_lastused" />
 				<item android:id="@+id/menu_usedcount"
-					android:title="@string/menu_usedcount_en" />
+					android:title="@string/menu_usedcount" />
 			</group>
 		</menu>
 	</item>
 	<item android:id="@+id/menu_settings"
-		android:title="@string/menu_settings_en"
+		android:title="@string/menu_settings"
 		android:icon="@drawable/settings">
 	</item>
 </menu>
