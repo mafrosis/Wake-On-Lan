@@ -1,4 +1,4 @@
-package net.mafro.android.widget;
+package net.mafro.android.wakeonlan;
 
 import android.os.Bundle;
 
@@ -23,9 +23,7 @@ import android.widget.ResourceCursorAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import net.mafro.android.wakeonlan.WakeOnLan;
-import net.mafro.android.wakeonlan.History;
-import net.mafro.android.wakeonlan.R;
+import net.mafro.android.widget.StarButton;
 
 
 public class HistoryListItemAdapter extends ResourceCursorAdapter implements OnCheckedChangeListener
