@@ -52,7 +52,7 @@ public class MagicPacket
 
 		//create socket to IP
 		final InetAddress address = InetAddress.getByName(ip);
-		final DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, PORT);
+		final DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, port);
 		final DatagramSocket socket = new DatagramSocket();
 		socket.send(packet);
 		socket.close();
