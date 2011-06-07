@@ -289,9 +289,15 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			if(!vip.getText().toString().equals("")) {
 				ip = vip.getText().toString();
 			}
+
 			int port = MagicPacket.PORT;
 			if(!vport.getText().toString().equals("")) {
-				port = Integer.valueOf(vport.getText().toString());
+				try {
+					port = Integer.valueOf(vport.getText().toString());
+				}catch(NumberFormatException nfe) {
+					notifyUser("Bad port number", WakeOnLan.this);
+					return;
+				}
 			}
 
 			//check for edit mode - no send of packet
