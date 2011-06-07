@@ -1,0 +1,6 @@
+A simple Wake On Lan application. Stores history of sent packets, to save you remembering MAC addresses.
+
+You will need to configure your computer to enable Wake On Lan first.
+
+Please refer to this website for further information and version history:
+http://android.mafro.net/

@@ -1,0 +1,49 @@
+v 1.4.1
+fixed bug in MagicPacket where always used port 9..
+fixed exception when parsing non-integer port number
+
+v 1.4
+
+implemented settings activity to disable update check. added option to main menu
+implemented sorting for history list, with three options: frequency of use, creation date, most recently used
+added a Google style star button to each list item which pushes it to the top of the list
+fixed bug in HistoryProvider setting invalid default values on an insert
+fixed crash when port not set
+
+v 1.3
+
+history items now unique on MAC, IP and port
+vastly improved the editing process
+persist form data until saved/sent
+added cancel button for edit mode, clear button for send mode
+added inline MAC address validation
+display item title in sent notification
+clear errors when resetting form
+improved MAC address validation via regexp
+
+v 1.2
+
+change display text to Host Name / IP Address
+updated project for SDK 1.5r1
+changed history item padding for android 1.5
+changed Delete for Remove, minor debug change in Updater
+single click for send packet
+further implemented edit, now removes old item
+
+v 1.1.1
+
+fixed layout bug, released 1.1.1
+fixed bug in Updater when GET fails
+
+v 1.1.0
+
+implemented edit
+accepts MACs without separators
+smart mac address formatting
+improved version checking
+check for updates once a week
+
+v 1.0.1
+
+added ScrollView for wake form
+
