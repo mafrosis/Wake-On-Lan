@@ -1,4 +1,4 @@
-v 1.4.1
+v 1.4.2
 fixed bug in MagicPacket where always used port 9..
 fixed exception when parsing non-integer port number
 
