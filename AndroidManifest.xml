@@ -20,10 +20,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-	
-        <activity android:name=".Settings"
-                  android:label="@string/menu_settings">
-        </activity>
 
 		<provider android:name="HistoryProvider" 
 				  android:authorities="net.mafro.android.wakeonlan.historyprovider" />

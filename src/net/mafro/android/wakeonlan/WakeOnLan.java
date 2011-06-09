@@ -82,8 +82,6 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
     public static final int MENU_ITEM_WAKE = Menu.FIRST;
     public static final int MENU_ITEM_DELETE = Menu.FIRST + 1;
 
-	private static final long WEEK = 604800;
-
 	private static int _editModeID = 0;
 	private static boolean typingMode = false;
 	
@@ -150,29 +148,12 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 		SharedPreferences settings = getSharedPreferences(TAG, 0);
 		SharedPreferences.Editor editor;
 		
-		if(settings.contains("check_for_update") == false) {
-			//default check_for_update pref to true on first run
+		// clean up old preferences
+		if(settings.contains("check_for_update") == true) {
 			editor = settings.edit();
-			editor.putBoolean("check_for_update", true);
+			editor.remove("check_for_update");
+			editor.remove("last_update");
 			editor.commit();
-
-		}else{
-			//check for updates
-			if(settings.getBoolean("check_for_update", true) == true) {
-				long last_update = settings.getLong("last_update", 0);
-				long now = System.currentTimeMillis();
-				
-				//Log.i(TAG+"Update", Long.toString(last_update));
-				//Log.i(TAG+"Update", Long.toString(now-WEEK));
-				
-				if((last_update == 0) || (last_update < now-WEEK)) {
-					Updater.checkForUpdates(this, handler);
-					
-					editor = settings.edit();
-					editor.putLong("last_update", now);
-					editor.commit();
-				}
-			}
 		}
 
 		//load our sort mode
@@ -251,11 +232,6 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			sort_mode = USED_COUNT;
 			break;
 		case R.id.menu_sortby:
-			return false;
-		case R.id.menu_settings:
-			//display settings Activity
-			Intent settings = new Intent(this, Settings.class);
-			startActivity(settings);
 			return false;
 		}
 
@@ -604,29 +580,5 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 			notification.show();
 		}
 	}
-
-
-	private Handler handler = new Handler()
-	{
-		@Override
-		public void handleMessage(Message msg) {
-			//prompt user for action
-			new AlertDialog.Builder(WakeOnLan.this)
-				.setTitle(getString(R.string.update_available))
-				.setMessage(getString(R.string.install_latest_question))
-				.setIcon(R.drawable.icon)
-				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-					public void onClick(DialogInterface dialog, int whichButton) {
-						//if version numbers don't match then open Market application
-						Intent market = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.market_url)+getPackageName()));
-						startActivity(market);
-					}
-
-			}).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {}
-			}).show();
-		}
-	};
 
 }
