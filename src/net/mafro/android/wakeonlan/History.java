@@ -31,8 +31,9 @@ package net.mafro.android.wakeonlan;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-/*
- *	convenience definitions for HistoryProvider
+
+/**
+ *	@desc	convenience definitions for HistoryProvider
  */
 public final class History {
 	public static final String AUTHORITY = "net.mafro.android.wakeonlan.historyprovider";
@@ -58,4 +59,5 @@ public final class History {
 		public static final String USED_COUNT = "used_count";
 		public static final String IS_STARRED = "is_starred";
 	}
+
 }

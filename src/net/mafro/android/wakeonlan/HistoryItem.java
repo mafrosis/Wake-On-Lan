@@ -26,70 +26,28 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package net.mafro.android.widget;
+package net.mafro.android.wakeonlan;
 
-import android.os.Bundle;
-
-import android.content.Context;
-
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-
-import android.graphics.Canvas;
-
-import android.util.AttributeSet;
-import android.util.Log;
-
-import net.mafro.android.wakeonlan.WakeOnLan;
-import net.mafro.android.wakeonlan.R;
+import android.database.Cursor;
 
 
 /**
- *	@desc	Custom button type to implement Google-style favourite star
+ *	@desc	Convenience class for passing history entries around the application
  */
-public class StarButton extends CompoundButton implements OnCheckedChangeListener
+public class HistoryItem
 {
+	public int id;
+	public String title;
+	public String mac;
+	public String ip;
+	public int port;
 
-	private static final String TAG = "StarButton";
-
-
-	public StarButton(Context context)
+	public HistoryItem(int id, String title, String mac, String ip, int port)
 	{
-		super(context);
-		init(context);
+		this.id = id;
+		this.title = title;
+		this.mac = mac;
+		this.ip = ip;
+		this.port = port;
 	}
-
-	public StarButton(Context context, AttributeSet attrs)
-	{
-		super(context, attrs);
-		init(context);
-	}
-
-	public StarButton(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		init(context);
-	}
-
-
-	private void init(Context context)
-	{
-		setOnCheckedChangeListener(this);
-		render();
-	}
-
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-	{
-		render();
-	}
-
-	public void render()
-	{
-		//render the icon on this button
-		if(isChecked() == true) {
-			setButtonDrawable(R.drawable.star_on);
-		}else{
-			setButtonDrawable(R.drawable.star_off);
-		}
-	}
-
 }

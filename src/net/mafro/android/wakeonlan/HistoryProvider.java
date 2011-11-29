@@ -50,6 +50,9 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import java.util.HashMap;
 
 
+/**
+ *	@desc	Custom ContentProvider to wrap underlying datastore
+ */
 public class HistoryProvider extends ContentProvider {
 
 	private static final String TAG = "HistoryProvider";
@@ -57,58 +60,58 @@ public class HistoryProvider extends ContentProvider {
 	private static final String DATABASE_NAME = "wakeonlan_history.db";
 	private static final int DATABASE_VERSION = 2;
 
-    private static HashMap<String, String> sHistoryProjectionMap;
-	
+	private static HashMap<String, String> sHistoryProjectionMap;
+
 	private static final String HISTORY_TABLE_NAME = "history";
-	
+
 	private static final int HISTORY = 1;
 	private static final int HISTORY_ID = 2;
 
-    private static final UriMatcher sUriMatcher;
-	
+	private static final UriMatcher sUriMatcher;
+
 	/**
-     * This class helps open, create, and upgrade the database file.
-     */
-    private static class DatabaseHelper extends SQLiteOpenHelper {
+	 * This class helps open, create, and upgrade the database file.
+	 */
+	private static class DatabaseHelper extends SQLiteOpenHelper {
 
-        public DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
+		public DatabaseHelper(Context context) {
+			super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		}
 
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE history ("
-                    + History.Items._ID + " INTEGER PRIMARY KEY,"
-                    + History.Items.TITLE + " TEXT,"
-                    + History.Items.MAC + " TEXT,"
-                    + History.Items.IP + " TEXT,"
-                    + History.Items.PORT + " INTEGER,"
-                    + History.Items.CREATED_DATE + " INTEGER,"
-                    + History.Items.LAST_USED_DATE + " INTEGER,"
+		@Override
+		public void onCreate(SQLiteDatabase db) {
+			db.execSQL("CREATE TABLE history ("
+					+ History.Items._ID + " INTEGER PRIMARY KEY,"
+					+ History.Items.TITLE + " TEXT,"
+					+ History.Items.MAC + " TEXT,"
+					+ History.Items.IP + " TEXT,"
+					+ History.Items.PORT + " INTEGER,"
+					+ History.Items.CREATED_DATE + " INTEGER,"
+					+ History.Items.LAST_USED_DATE + " INTEGER,"
 					+ History.Items.USED_COUNT + " INTEGER DEFAULT 1,"
 					+ History.Items.IS_STARRED + " INTEGER DEFAULT 0"
-                    + ");");
-        }
+					+ ");");
+		}
 
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			if((oldVersion == 1) && (newVersion == 2)) {
-            	db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.USED_COUNT + " INTEGER DEFAULT 1;");
-            	db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.IS_STARRED + " INTEGER DEFAULT 0;");
+				db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.USED_COUNT + " INTEGER DEFAULT 1;");
+				db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.IS_STARRED + " INTEGER DEFAULT 0;");
 			}
-        }
-    }
+		}
+	}
 
-    private DatabaseHelper mOpenHelper;
+	private DatabaseHelper mOpenHelper;
 
 	@Override
-    public boolean onCreate() {
-        mOpenHelper = new DatabaseHelper(getContext());
-        return true;
-    }
+	public boolean onCreate() {
+		mOpenHelper = new DatabaseHelper(getContext());
+		return true;
+	}
 
-    @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+	@Override
+	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(HISTORY_TABLE_NAME);
 		qb.setProjectionMap(sHistoryProjectionMap);
@@ -116,9 +119,9 @@ public class HistoryProvider extends ContentProvider {
 		// If no sort order is specified use the default
 		String orderBy;
 		if (TextUtils.isEmpty(sortOrder)) {
-		    orderBy = History.Items.DEFAULT_SORT_ORDER;
+			orderBy = History.Items.DEFAULT_SORT_ORDER;
 		}else{
-		    orderBy = sortOrder;
+			orderBy = sortOrder;
 		}
 
 		// Get the database and run the query
@@ -128,10 +131,10 @@ public class HistoryProvider extends ContentProvider {
 		// Tell the cursor what uri to watch, so it knows when its source data changes
 		c.setNotificationUri(getContext().getContentResolver(), uri);
 		return c;
-    }
+	}
 
-    @Override
-    public String getType(Uri uri) {
+	@Override
+	public String getType(Uri uri) {
 		switch (sUriMatcher.match(uri)) {
 		case HISTORY:
 			return History.Items.CONTENT_TYPE;
@@ -142,10 +145,10 @@ public class HistoryProvider extends ContentProvider {
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
-    }
+	}
 
-    @Override
-    public Uri insert(Uri uri, ContentValues initialValues) {
+	@Override
+	public Uri insert(Uri uri, ContentValues initialValues) {
 		// Validate the requested uri
 		if (sUriMatcher.match(uri) != HISTORY) {
 			throw new IllegalArgumentException("Unknown URI " + uri);
@@ -185,7 +188,7 @@ public class HistoryProvider extends ContentProvider {
 		}
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-		
+
 		//insert record, 2nd param is NULLABLE field for if values is empty
 		long rowId = db.insert(HISTORY_TABLE_NAME, History.Items.MAC, values);
 		if (rowId > 0) {
@@ -195,58 +198,58 @@ public class HistoryProvider extends ContentProvider {
 		}
 
 		throw new SQLException("Failed to insert row into " + uri);
-    }
+	}
 
-    @Override
-    public int delete(Uri uri, String where, String[] whereArgs) {
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        int count;
-        switch (sUriMatcher.match(uri)) {
-        case HISTORY:
-            count = db.delete(HISTORY_TABLE_NAME, where, whereArgs);
-            break;
+	@Override
+	public int delete(Uri uri, String where, String[] whereArgs) {
+		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+		int count;
+		switch (sUriMatcher.match(uri)) {
+		case HISTORY:
+			count = db.delete(HISTORY_TABLE_NAME, where, whereArgs);
+			break;
 
-        case HISTORY_ID:
-            String noteId = uri.getPathSegments().get(1);
-            count = db.delete(HISTORY_TABLE_NAME, History.Items._ID + "=" + noteId
-                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
-            break;
+		case HISTORY_ID:
+			String noteId = uri.getPathSegments().get(1);
+			count = db.delete(HISTORY_TABLE_NAME, History.Items._ID + "=" + noteId
+					+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
 
-        default:
-            throw new IllegalArgumentException("Unknown URI " + uri);
-        }
+		default:
+			throw new IllegalArgumentException("Unknown URI " + uri);
+		}
 
-        getContext().getContentResolver().notifyChange(uri, null);
-        return count;
-    }
+		getContext().getContentResolver().notifyChange(uri, null);
+		return count;
+	}
 
-    @Override
-    public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+	@Override
+	public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
+		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
-        int count;
-        switch (sUriMatcher.match(uri)) {
-        case HISTORY:
-            count = db.update(HISTORY_TABLE_NAME, values, where, whereArgs);
-            break;
+		int count;
+		switch (sUriMatcher.match(uri)) {
+		case HISTORY:
+			count = db.update(HISTORY_TABLE_NAME, values, where, whereArgs);
+			break;
 
-        case HISTORY_ID:
-            String historyId = uri.getPathSegments().get(1);
-            count = db.update(HISTORY_TABLE_NAME, values, History.Items._ID + "=" + historyId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
-            break;
+		case HISTORY_ID:
+			String historyId = uri.getPathSegments().get(1);
+			count = db.update(HISTORY_TABLE_NAME, values, History.Items._ID + "=" + historyId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
 
-        default:
-            throw new IllegalArgumentException("Unknown URI " + uri);
-        }
+		default:
+			throw new IllegalArgumentException("Unknown URI " + uri);
+		}
 
-        getContext().getContentResolver().notifyChange(uri, null);
-        return count;
-    }
+		getContext().getContentResolver().notifyChange(uri, null);
+		return count;
+	}
 
-    static {
-        sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(History.AUTHORITY, "history", HISTORY);
-        sUriMatcher.addURI(History.AUTHORITY, "history/#", HISTORY_ID);
+	static {
+		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+		sUriMatcher.addURI(History.AUTHORITY, "history", HISTORY);
+		sUriMatcher.addURI(History.AUTHORITY, "history/#", HISTORY_ID);
 
 		sHistoryProjectionMap = new HashMap<String, String>();
 		sHistoryProjectionMap.put(History.Items._ID, History.Items._ID);
@@ -258,6 +261,6 @@ public class HistoryProvider extends ContentProvider {
 		sHistoryProjectionMap.put(History.Items.LAST_USED_DATE, History.Items.LAST_USED_DATE);
 		sHistoryProjectionMap.put(History.Items.USED_COUNT, History.Items.USED_COUNT);
 		sHistoryProjectionMap.put(History.Items.IS_STARRED, History.Items.IS_STARRED);
-    }
+	}
 
 }

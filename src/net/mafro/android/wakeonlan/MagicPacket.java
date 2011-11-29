@@ -43,14 +43,17 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 
+/**
+ *	@desc	Static WOL magic packet class
+ */
 public class MagicPacket
 {
 	private static final String TAG = "MagicPacket";
-	
+
 	public static final String BROADCAST = "192.168.1.255";
 	public static final int PORT = 9;
 	public static final char SEPARATOR = ':';
-	
+
 	public static String send(String mac, String ip) throws UnknownHostException, SocketException, IOException, IllegalArgumentException
 	{
 		return send(mac, ip, PORT);
@@ -60,13 +63,13 @@ public class MagicPacket
 	{
 		//validate MAC and chop into array
 		final String[] hex = validateMac(mac);
-		
+
 		//convert to base16 bytes
 		final byte[] macBytes = new byte[6];
 		for(int i=0; i<6; i++) {
 			macBytes[i] = (byte) Integer.parseInt(hex[i], 16);
 		}
-		
+
 		final byte[] bytes = new byte[102];
 
 		//fill first 6 bytes
@@ -84,7 +87,7 @@ public class MagicPacket
 		final DatagramSocket socket = new DatagramSocket();
 		socket.send(packet);
 		socket.close();
-		
+
 		return hex[0]+SEPARATOR+hex[1]+SEPARATOR+hex[2]+SEPARATOR+hex[3]+SEPARATOR+hex[4]+SEPARATOR+hex[5];
 	}
 
@@ -93,12 +96,12 @@ public class MagicPacket
 		final String[] hex = validateMac(mac);
 		return hex[0]+SEPARATOR+hex[1]+SEPARATOR+hex[2]+SEPARATOR+hex[3]+SEPARATOR+hex[4]+SEPARATOR+hex[5];
 	}
-	
+
 	private static String[] validateMac(String mac) throws IllegalArgumentException
 	{
 		//error handle semi colons
 		mac = mac.replace(";", ":");
-		
+
 		//regexp pattern match a valid MAC address
 		final Pattern pat = Pattern.compile("((([0-9a-fA-F]){2}[-:]){5}([0-9a-fA-F]){2})");
 		final Matcher m = pat.matcher(mac);
@@ -113,23 +116,22 @@ public class MagicPacket
 
 	public static void main(String[] args) {
 		if (args.length != 2) {
-            System.out.println("Usage: java WakeOnLan <broadcast-ip> <mac-address>");
-            System.out.println("Example: java WakeOnLan 192.168.0.255 00:0D:61:08:22:4A");
-            System.out.println("Example: java WakeOnLan 192.168.0.255 00-0D-61-08-22-4A");
-            System.exit(1);
-        }
-        
-        String ipStr = args[0];
-        String macStr = args[1];
+			System.out.println("Usage: java WakeOnLan <broadcast-ip> <mac-address>");
+			System.out.println("Example: java WakeOnLan 192.168.0.255 00:0D:61:08:22:4A");
+			System.out.println("Example: java WakeOnLan 192.168.0.255 00-0D-61-08-22-4A");
+			System.exit(1);
+		}
+
+		String ipStr = args[0];
+		String macStr = args[1];
 
 		try	{
 			MagicPacket.send(ipStr, macStr);
 		}
-        catch (Exception e) {
-            System.out.println("Failed to send Wake-on-LAN packet: + e");
-            System.exit(1);
-        }
-
+		catch (Exception e) {
+			System.out.println("Failed to send Wake-on-LAN packet: + e");
+			System.exit(1);
+		}
 	}
 
 }

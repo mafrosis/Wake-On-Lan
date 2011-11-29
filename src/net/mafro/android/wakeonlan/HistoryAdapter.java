@@ -54,6 +54,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import net.mafro.android.widget.StarButton;
 
 
+/**
+ *	@desc	Custom adapter to aid in UI binding
+ */
 public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedChangeListener
 {
 
@@ -82,8 +85,6 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 		int portColumn = cursor.getColumnIndex(History.Items.PORT);
 		int isStarredColumn = cursor.getColumnIndex(History.Items.IS_STARRED);
 
-		//Log.d(TAG+":bindView", Integer.toString(cursor.getInt(idColumn)));
-
 		TextView vtitle = (TextView) view.findViewById(R.id.history_row_title);
 		TextView vmac = (TextView) view.findViewById(R.id.history_row_mac);
 		TextView vip = (TextView) view.findViewById(R.id.history_row_ip);
@@ -111,7 +112,7 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 		star.setTag(cursor.getInt(idColumn));
 	}
 
-	
+
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 	{
 		//extract record's _ID from tag
@@ -128,7 +129,7 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 		//update history setting is_starred to value
 		ContentValues values = new ContentValues(1);
 		values.put(History.Items.IS_STARRED, value);
-		
+
 		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(id));
 		this.content.update(itemUri, values, null, null);
 	}
