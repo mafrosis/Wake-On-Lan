@@ -4,3 +4,4 @@ libs/*
 lib/*
 local.properties
 R.java
+build.xml
