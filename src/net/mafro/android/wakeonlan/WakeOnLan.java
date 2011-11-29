@@ -86,7 +86,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 	private static boolean typingMode = false;
 	
 	private Cursor cursor;
-	private HistoryListItemAdapter adapter;
+	private HistoryAdapter adapter;
 
     private static final String[] PROJECTION = new String[]
 	{
@@ -182,7 +182,7 @@ public class WakeOnLan extends TabActivity implements OnClickListener, OnItemCli
 
 		//load History list
 		cursor = getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, orderBy);
-		adapter = new HistoryListItemAdapter(this, cursor);
+		adapter = new HistoryAdapter(this, cursor);
 
 		ListView lvHistory = (ListView)findViewById(R.id.history);
 		lvHistory.setAdapter(adapter);

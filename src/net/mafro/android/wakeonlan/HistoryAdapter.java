@@ -54,16 +54,16 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import net.mafro.android.widget.StarButton;
 
 
-public class HistoryListItemAdapter extends ResourceCursorAdapter implements OnCheckedChangeListener
+public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedChangeListener
 {
 
-	private static final String TAG = "HistoryListItemAdapter";
+	private static final String TAG = "HistoryAdapter";
 
 	private Context context;
 	private ContentResolver content;
 
 
-	public HistoryListItemAdapter(Context context, Cursor cursor)
+	public HistoryAdapter(Context context, Cursor cursor)
 	{
 		super(context, R.layout.history_row, cursor);
 		this.context = context;
