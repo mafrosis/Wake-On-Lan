@@ -8,6 +8,8 @@
 	<string name="button_cancel">Cancel Edit</string>
 	<string name="tab_history">History</string>
 	<string name="tab_wake">Wake</string>
+	<string name="title_history">History</string>
+	<string name="title_wake">Wake</string>
 	<string name="title">Reference</string>
 	<string name="mac">MAC Address</string>
 	<string name="ip">Host Name / IP Address</string>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<LinearLayout
+		android:id="@+id/historyview"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:layout_weight="1"
+		android:layout_gravity="left">
+
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
+
+			<TextView 
+				android:id="@+id/historytitle"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				style="@style/tablet_title"
+				android:text="@string/title_history" />
+
+			<ListView 
+				android:id="@+id/history"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginRight="4dip" />
+		</LinearLayout>
+	</LinearLayout>
+	
+	<ScrollView
+		android:id="@+id/wakeview"
+		android:layout_width="0dp"
+		android:layout_height="fill_parent"
+		android:layout_weight="1"
+		android:layout_gravity="right">
+
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
+			
+			<TextView 
+				android:id="@+id/waketitle"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				style="@style/tablet_title"
+				android:text="@string/title_wake" />
+
+			<TextView 
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/title" />
+			<EditText 
+				android:id="@+id/title"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content" />
+				
+			<TextView 
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/mac" />
+			<EditText 
+				android:id="@+id/mac"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content" />
+				
+			<TextView 
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/ip" />
+			<EditText 
+				android:id="@+id/ip"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content" />
+				
+			<TextView 
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/port" />
+			<EditText 
+				android:id="@+id/port"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content" />
+			
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="6px">
+
+				<Button
+					android:id="@+id/clear_wake"
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content" 
+					android:layout_gravity="left"
+					android:text="@string/button_clear" />
+				<Button
+					android:id="@+id/send_wake"
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content" 
+					android:layout_weight="1"
+					android:layout_gravity="right"
+					android:text="@string/button_wake" />
+			</LinearLayout>
+
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

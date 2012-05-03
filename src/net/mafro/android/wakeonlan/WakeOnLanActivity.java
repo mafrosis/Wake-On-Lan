@@ -28,7 +28,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package net.mafro.android.wakeonlan;
 
-import android.app.TabActivity;
+import android.app.Activity;
+import android.app.LocalActivityManager;
 
 import android.os.Bundle;
 
@@ -42,9 +43,12 @@ import android.util.Log;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.TextView;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import android.view.View;
@@ -60,16 +64,19 @@ import android.view.MenuInflater;
 /**
  *	@desc	Base activity, handles all UI events except history ListView clicks
  */
-public class WakeOnLanActivity extends TabActivity implements OnClickListener, OnTabChangeListener, OnFocusChangeListener
+public class WakeOnLanActivity extends Activity implements OnClickListener, OnTabChangeListener, OnFocusChangeListener
 {
 
 	public static final String TAG = "WakeOnLan";
 
-	public static final int MENU_ITEM_WAKE = Menu.FIRST;
-	public static final int MENU_ITEM_DELETE = Menu.FIRST + 1;
+    public static final int MENU_ITEM_WAKE = Menu.FIRST;
+    public static final int MENU_ITEM_DELETE = Menu.FIRST + 1;
 
 	private static int _editModeID = 0;
 	private static boolean typingMode = false;
+
+	private static boolean isTablet = false;
+	private TabHost th;
 
 	private HistoryListHandler histHandler;
 	private static int sort_mode;
@@ -77,6 +84,18 @@ public class WakeOnLanActivity extends TabActivity implements OnClickListener, O
 	public static final int CREATED = 0;
 	public static final int LAST_USED = 1;
 	public static final int USED_COUNT = 2;
+
+    private static final String[] PROJECTION = new String[]
+	{
+		History.Items._ID,
+		History.Items.TITLE,
+		History.Items.MAC,
+		History.Items.IP,
+		History.Items.PORT,
+		History.Items.LAST_USED_DATE,
+		History.Items.USED_COUNT,
+		History.Items.IS_STARRED
+    };
 
 	private static Toast notification;
 
@@ -88,16 +107,30 @@ public class WakeOnLanActivity extends TabActivity implements OnClickListener, O
 		setContentView(R.layout.main);
 
 		//configure tabs
-		TabHost th = getTabHost();
+        th = (TabHost)findViewById(R.id.tabhost);
 
-		th.addTab(th.newTabSpec("tab_history").setIndicator(getString(R.string.tab_history), getResources().getDrawable(R.drawable.ical)).setContent(R.id.historyview));
-		th.addTab(th.newTabSpec("tab_wake").setIndicator(getString(R.string.tab_wake), getResources().getDrawable(R.drawable.wake)).setContent(R.id.wakeview));
+		// tabs only exist in phone layouts
+		if(th != null) {
+			WakeOnLanActivity.isTablet = true;
 
-		th.setCurrentTab(0);
+			LocalActivityManager lam = new LocalActivityManager(this, false);
+			//lam.dispatchCreate(savedInstanceState);
+			th.setup(lam);
 
-		//register self as tab changed listener
-		th.setOnTabChangedListener(this);
+			th.addTab(th.newTabSpec("tab_history").setIndicator(getString(R.string.tab_history), getResources().getDrawable(R.drawable.ical)).setContent(R.id.historyview));
+			th.addTab(th.newTabSpec("tab_wake").setIndicator(getString(R.string.tab_wake), getResources().getDrawable(R.drawable.wake)).setContent(R.id.wakeview));
 
+			th.setCurrentTab(0);
+
+			//register self as tab changed listener
+			th.setOnTabChangedListener(this);
+		}else{
+			//set the background colour of the titles
+        	TextView historytitle = (TextView)findViewById(R.id.historytitle);
+			historytitle.setBackgroundColor(0xFF999999);
+        	TextView waketitle = (TextView)findViewById(R.id.waketitle);
+			waketitle.setBackgroundColor(0xFF999999);
+		}
 
 		//set defaults on Wake tab
 		EditText vip = (EditText)findViewById(R.id.ip);
@@ -268,7 +301,9 @@ public class WakeOnLanActivity extends TabActivity implements OnClickListener, O
 			typingMode = false;
 
 			//switch back to the history tab
-			getTabHost().setCurrentTab(0);
+			if(WakeOnLanActivity.isTablet == true) {
+				th.setCurrentTab(0);
+			}
 
 		}else if(v.getId() == R.id.clear_wake) {
 			if(_editModeID == 0) {
@@ -288,7 +323,9 @@ public class WakeOnLanActivity extends TabActivity implements OnClickListener, O
 				typingMode = false;
 
 				//switch back to the history tab
-				getTabHost().setCurrentTab(0);
+				if(WakeOnLanActivity.isTablet == true) {
+					th.setCurrentTab(0);
+				}
 			}
 		}
 	}
@@ -425,8 +462,9 @@ public class WakeOnLanActivity extends TabActivity implements OnClickListener, O
 			Button cancelEdit = (Button)findViewById(R.id.clear_wake);
 			cancelEdit.setText(R.string.button_cancel);
 
-			TabHost th = getTabHost();
-			th.setCurrentTab(1);
+			if(WakeOnLanActivity.isTablet == true) {
+				th.setCurrentTab(1);
+			}
 			return true;
 
 		case R.id.menu_delete:

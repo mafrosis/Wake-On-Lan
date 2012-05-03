@@ -32,26 +32,30 @@
 			android:id="@+id/history_row_mac"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
- 			android:layout_below="@id/history_row_title" />
+ 			android:layout_below="@id/history_row_title"
+			android:textSize="@dimen/font_size" />
 
         <TextView
 			android:id="@+id/history_row_ip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
- 			android:layout_below="@id/history_row_mac" />
+ 			android:layout_below="@id/history_row_mac"
+			android:textSize="@dimen/font_size" />
 		<TextView
 			android:id="@+id/history_row_colon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 			android:layout_toRightOf="@id/history_row_ip"
 			android:layout_alignTop="@id/history_row_ip"
+			android:textSize="@dimen/font_size"
 			android:text=":" />
 		<TextView
 			android:id="@+id/history_row_port"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 			android:layout_toRightOf="@id/history_row_colon"
-			android:layout_alignTop="@id/history_row_ip" />
+			android:layout_alignTop="@id/history_row_ip"
+			android:textSize="@dimen/font_size" />
             
     </RelativeLayout>
 
