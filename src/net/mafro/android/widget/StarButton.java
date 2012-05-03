@@ -40,7 +40,6 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import net.mafro.android.wakeonlan.WakeOnLan;
 import net.mafro.android.wakeonlan.R;
 
 
