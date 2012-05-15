@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:padding="4dip">
+	android:layout_width="fill_parent"
+	android:layout_height="?android:attr/listPreferredItemHeight"
+	android:padding="4dip">
 
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_marginRight="10dip"
-        android:src="@drawable/icon" />
+	<ImageView
+		android:id="@+id/icon"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:layout_marginRight="10dip"
+		android:src="@drawable/icon" />
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
 
 		<TextView
 			android:id="@+id/history_row_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
 
 		<net.mafro.android.widget.StarButton
 			android:id="@+id/history_row_star"
@@ -28,35 +28,35 @@
 			android:layout_alignParentRight="true"
 			android:clickable="true" />
 
-        <TextView
+		<TextView
 			android:id="@+id/history_row_mac"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
  			android:layout_below="@id/history_row_title"
 			android:textSize="@dimen/font_size" />
 
-        <TextView
+		<TextView
 			android:id="@+id/history_row_ip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
  			android:layout_below="@id/history_row_mac"
 			android:textSize="@dimen/font_size" />
 		<TextView
 			android:id="@+id/history_row_colon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
 			android:layout_toRightOf="@id/history_row_ip"
 			android:layout_alignTop="@id/history_row_ip"
 			android:textSize="@dimen/font_size"
 			android:text=":" />
 		<TextView
 			android:id="@+id/history_row_port"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
 			android:layout_toRightOf="@id/history_row_colon"
 			android:layout_alignTop="@id/history_row_ip"
 			android:textSize="@dimen/font_size" />
-            
-    </RelativeLayout>
+			
+	</RelativeLayout>
 
 </LinearLayout>

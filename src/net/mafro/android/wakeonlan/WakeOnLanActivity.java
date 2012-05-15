@@ -69,8 +69,8 @@ public class WakeOnLanActivity extends Activity implements OnClickListener, OnTa
 
 	public static final String TAG = "WakeOnLan";
 
-    public static final int MENU_ITEM_WAKE = Menu.FIRST;
-    public static final int MENU_ITEM_DELETE = Menu.FIRST + 1;
+	public static final int MENU_ITEM_WAKE = Menu.FIRST;
+	public static final int MENU_ITEM_DELETE = Menu.FIRST + 1;
 
 	private static int _editModeID = 0;
 	private static boolean typingMode = false;
@@ -85,7 +85,7 @@ public class WakeOnLanActivity extends Activity implements OnClickListener, OnTa
 	public static final int LAST_USED = 1;
 	public static final int USED_COUNT = 2;
 
-    private static final String[] PROJECTION = new String[]
+	private static final String[] PROJECTION = new String[]
 	{
 		History.Items._ID,
 		History.Items.TITLE,
@@ -95,7 +95,7 @@ public class WakeOnLanActivity extends Activity implements OnClickListener, OnTa
 		History.Items.LAST_USED_DATE,
 		History.Items.USED_COUNT,
 		History.Items.IS_STARRED
-    };
+	};
 
 	private static Toast notification;
 
@@ -107,7 +107,7 @@ public class WakeOnLanActivity extends Activity implements OnClickListener, OnTa
 		setContentView(R.layout.main);
 
 		//configure tabs
-        th = (TabHost)findViewById(R.id.tabhost);
+		th = (TabHost)findViewById(R.id.tabhost);
 
 		// tabs only exist in phone layouts
 		if(th != null) {
@@ -126,9 +126,9 @@ public class WakeOnLanActivity extends Activity implements OnClickListener, OnTa
 			th.setOnTabChangedListener(this);
 		}else{
 			//set the background colour of the titles
-        	TextView historytitle = (TextView)findViewById(R.id.historytitle);
+			TextView historytitle = (TextView)findViewById(R.id.historytitle);
 			historytitle.setBackgroundColor(0xFF999999);
-        	TextView waketitle = (TextView)findViewById(R.id.waketitle);
+			TextView waketitle = (TextView)findViewById(R.id.waketitle);
 			waketitle.setBackgroundColor(0xFF999999);
 		}
 
