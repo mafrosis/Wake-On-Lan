@@ -207,24 +207,30 @@ public class WakeOnLanActivity extends TabActivity implements OnClickListener, O
 			EditText vip = (EditText)findViewById(R.id.ip);
 			EditText vport = (EditText)findViewById(R.id.port);
 
-			String title = vtitle.getText().toString();
-			String mac = vmac.getText().toString();
+			String title = vtitle.getText().toString().trim();
+			String mac = vmac.getText().toString().trim();
 
 			//default IP and port unless set on form
 			String ip = MagicPacket.BROADCAST;
-			if(!vip.getText().toString().equals("")) {
-				ip = vip.getText().toString();
+			if(!vip.getText().toString().trim().equals("")) {
+				ip = vip.getText().toString().trim();
 			}
 
 			int port = MagicPacket.PORT;
-			if(!vport.getText().toString().equals("")) {
+			if(!vport.getText().toString().trim().equals("")) {
 				try {
-					port = Integer.valueOf(vport.getText().toString());
+					port = Integer.valueOf(vport.getText().toString().trim());
 				}catch(NumberFormatException nfe) {
 					notifyUser("Bad port number", WakeOnLanActivity.this);
 					return;
 				}
 			}
+
+			//update form with cleaned variables
+			vtitle.setText(title);
+			vmac.setText(mac);
+			vip.setText(ip);
+			vport.setText(Integer.toString(port));
 
 			//check for edit mode - no send of packet
 			if(_editModeID == 0) {
@@ -247,7 +253,6 @@ public class WakeOnLanActivity extends TabActivity implements OnClickListener, O
 					formattedMac = MagicPacket.cleanMac(mac);
 
 				}catch(IllegalArgumentException iae) {
-					//Log.e(TAG, iae.getMessage(), iae);
 					notifyUser(iae.getMessage(), WakeOnLanActivity.this);
 					return;
 				}
