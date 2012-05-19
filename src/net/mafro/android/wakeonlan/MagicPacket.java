@@ -102,15 +102,30 @@ public class MagicPacket
 		//error handle semi colons
 		mac = mac.replace(";", ":");
 
+		//attempt to assist the user a little
+		String newMac = "";
+
+		if(mac.matches("([a-zA-Z0-9]){12}")) {
+			// expand 12 chars into a valid mac address
+			for(int i=0; i<mac.length(); i++){
+				if((i > 1) && (i % 2 == 0)) {
+					newMac += ":";
+				}
+				newMac += mac.charAt(i);
+			}
+		}else{
+			newMac = mac;
+		}
+
 		//regexp pattern match a valid MAC address
 		final Pattern pat = Pattern.compile("((([0-9a-fA-F]){2}[-:]){5}([0-9a-fA-F]){2})");
-		final Matcher m = pat.matcher(mac);
+		final Matcher m = pat.matcher(newMac);
 
 		if(m.find()) {
 			String result = m.group();
 			return result.split("(\\:|\\-)");
 		}else{
-			throw new IllegalArgumentException("Invalid MAC address.");
+			throw new IllegalArgumentException("Invalid MAC address");
 		}
 	}
 
@@ -126,11 +141,13 @@ public class MagicPacket
 		String macStr = args[1];
 
 		try	{
-			MagicPacket.send(ipStr, macStr);
+			macStr = MagicPacket.cleanMac(macStr);
+			MagicPacket.send(macStr, ipStr);
 		}
-		catch (Exception e) {
-			System.out.println("Failed to send Wake-on-LAN packet: + e");
-			System.exit(1);
+		catch(IllegalArgumentException e) {
+			System.out.println(e.getMessage());
+		}catch(Exception e) {
+			System.out.println("Failed to send Wake-on-LAN packet:" + e.getMessage());
 		}
 	}
 
