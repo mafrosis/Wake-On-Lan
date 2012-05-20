@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
-	android:layout_height="?android:attr/listPreferredItemHeight"
-	android:padding="4dip">
+	android:layout_height="@dimen/list_item_height"
+	android:padding="3dp">
 
 	<ImageView
 		android:id="@+id/icon"
 		android:layout_width="wrap_content"
 		android:layout_height="fill_parent"
-		android:layout_marginRight="10dip"
+		android:layout_marginRight="10dp"
 		android:src="@drawable/icon" />
 
 	<RelativeLayout
@@ -18,12 +18,13 @@
 		<TextView
 			android:id="@+id/history_row_title"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content"
+			android:textSize="@dimen/font_size" />
 
 		<net.mafro.android.widget.StarButton
 			android:id="@+id/history_row_star"
-			android:layout_width="32px"
-			android:layout_height="32px"
+			android:layout_width="32dp"
+			android:layout_height="32dp"
 			android:layout_alignParentTop="true"
 			android:layout_alignParentRight="true"
 			android:clickable="true" />

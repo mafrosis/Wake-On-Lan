@@ -81,7 +81,7 @@
 						android:orientation="horizontal"
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
-						android:layout_marginTop="6px">
+						android:layout_marginTop="6dp">
 
 						<Button
 							android:id="@+id/clear_wake"

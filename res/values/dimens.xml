@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<dimen name="font_size">14sp</dimen>
+	<dimen name="list_item_height">66dp</dimen>
 </resources>
