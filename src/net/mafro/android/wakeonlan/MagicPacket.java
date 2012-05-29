@@ -158,9 +158,9 @@ public class MagicPacket
 
 	public static void main(String[] args) {
 		if (args.length != 2) {
-			System.out.println("Usage: java WakeOnLan <broadcast-ip> <mac-address>");
-			System.out.println("Example: java WakeOnLan 192.168.0.255 00:0D:61:08:22:4A");
-			System.out.println("Example: java WakeOnLan 192.168.0.255 00-0D-61-08-22-4A");
+			System.out.println("Usage: java MagicPacket <broadcast-ip> <mac-address>");
+			System.out.println("Example: java MagicPacket 192.168.0.255 00:0D:61:08:22:4A");
+			System.out.println("Example: java MagicPacket 192.168.0.255 00-0D-61-08-22-4A");
 			System.exit(1);
 		}
 
@@ -169,6 +169,7 @@ public class MagicPacket
 
 		try	{
 			macStr = MagicPacket.cleanMac(macStr);
+			System.out.println("Sending to: "+macStr);
 			MagicPacket.send(macStr, ipStr);
 		}
 		catch(IllegalArgumentException e) {
