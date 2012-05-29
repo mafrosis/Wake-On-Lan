@@ -37,7 +37,9 @@ import java.net.UnknownHostException;
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.SocketException;
+
 import java.lang.IllegalArgumentException;
+import java.lang.StringBuffer;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -94,7 +96,32 @@ public class MagicPacket
 	public static String cleanMac(String mac) throws IllegalArgumentException
 	{
 		final String[] hex = validateMac(mac);
-		return hex[0]+SEPARATOR+hex[1]+SEPARATOR+hex[2]+SEPARATOR+hex[3]+SEPARATOR+hex[4]+SEPARATOR+hex[5];
+
+		StringBuffer sb = new StringBuffer();
+		boolean isMixedCase = false;
+
+		// check for mixed case
+		for(int i=0; i<6; i++) {
+			sb.append(hex[i]);
+		}
+		String testMac = sb.toString();
+		if((testMac.toLowerCase().equals(testMac) == false) && (testMac.toUpperCase().equals(testMac) == false)) {
+			isMixedCase = true;
+		}
+
+		sb = new StringBuffer();
+		for(int i=0; i<6; i++) {
+			// convert mixed case to lower
+			if(isMixedCase == true) {
+				sb.append(hex[i].toLowerCase());
+			}else{
+				sb.append(hex[i]);
+			}
+			if(i < 5) {
+				sb.append(SEPARATOR);
+			}
+		}
+		return sb.toString();
 	}
 
 	private static String[] validateMac(String mac) throws IllegalArgumentException
