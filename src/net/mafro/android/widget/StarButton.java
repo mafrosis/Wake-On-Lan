@@ -85,9 +85,9 @@ public class StarButton extends CompoundButton implements OnCheckedChangeListene
 	{
 		//render the icon on this button
 		if(isChecked() == true) {
-			setButtonDrawable(R.drawable.star_on);
+			setButtonDrawable(R.drawable.btn_star_big_on);
 		}else{
-			setButtonDrawable(R.drawable.star_off);
+			setButtonDrawable(R.drawable.btn_star_big_off);
 		}
 	}
 
