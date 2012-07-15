@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2008-2011 Matt Black.
+Copyright (C) 2008-2012 Matt Black.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

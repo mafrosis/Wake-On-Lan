@@ -1,3 +1,14 @@
+v 1.5
+introduced new icons and support for several screen densities
+font size adjustments and list height across different android resolutions
+tablet support
+convert mixed case MAC addresses to lower
+auto-insert colons into MAC address fixes #6 (thanks to John Gorena)
+always trim whitespace on form fixes #7 (thanks to Wei Zhang)
+fixed bad ref in StarButton
+refactored app, added comments & general cleanup
+completely removed custom update-checker; superseded by the Android market
+
 v 1.4.2
 fixed bug in MagicPacket where always used port 9..
 fixed exception when parsing non-integer port number
