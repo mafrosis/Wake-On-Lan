@@ -165,19 +165,15 @@ public class HistoryProvider extends ContentProvider {
 
 		// Make sure that the fields are all set
 		if(values.containsKey(History.Items.TITLE) == false) {
-			Resources r = Resources.getSystem();
 			values.put(History.Items.TITLE, "");
 		}
 		if(values.containsKey(History.Items.MAC) == false) {
-			Resources r = Resources.getSystem();
 			values.put(History.Items.MAC, "");
 		}
 		if(values.containsKey(History.Items.IP) == false) {
-			Resources r = Resources.getSystem();
 			values.put(History.Items.IP, "");
 		}
 		if(values.containsKey(History.Items.PORT) == false) {
-			Resources r = Resources.getSystem();
 			values.put(History.Items.PORT, "");
 		}
 		if(values.containsKey(History.Items.CREATED_DATE) == false) {
@@ -210,8 +206,8 @@ public class HistoryProvider extends ContentProvider {
 			break;
 
 		case HISTORY_ID:
-			String noteId = uri.getPathSegments().get(1);
-			count = db.delete(HISTORY_TABLE_NAME, History.Items._ID + "=" + noteId
+			String histId = uri.getPathSegments().get(1);
+			count = db.delete(HISTORY_TABLE_NAME, History.Items._ID + "=" + histId
 					+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
 
