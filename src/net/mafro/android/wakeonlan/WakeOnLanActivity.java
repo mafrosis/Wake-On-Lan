@@ -172,6 +172,14 @@ public class WakeOnLanActivity extends Activity implements OnClickListener, OnTa
 		//load history handler (deals with cursor and history ListView)
 		histHandler = new HistoryListHandler(this, lv);
 		histHandler.bind(sort_mode);
+		
+		//add listener to get on click events
+		histHandler.addHistoryListClickListener(new HistoryListClickListener() {
+
+			public void onClick(HistoryItem item) {
+				onHistoryItemClick(item);
+			}
+		});
 
 		//register main Activity as context menu handler
 		registerForContextMenu(lv);
@@ -476,6 +484,12 @@ public class WakeOnLanActivity extends Activity implements OnClickListener, OnTa
 		}
 	}
 
+	private void onHistoryItemClick(HistoryItem item) {
+		String mac = sendPacket(item);
+		if(mac != null) {
+			histHandler.incrementHistory(item.id);
+		}
+	}
 
 	public static void notifyUser(String message, Context context)
 	{
