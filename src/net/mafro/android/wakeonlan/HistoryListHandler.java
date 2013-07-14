@@ -63,7 +63,7 @@ public class HistoryListHandler implements OnItemClickListener
 	private List<HistoryListClickListener> listeners;
 
 
-	private static final String[] PROJECTION = new String[]
+	public static final String[] PROJECTION = new String[]
 	{
 		History.Items._ID,
 		History.Items.TITLE,
