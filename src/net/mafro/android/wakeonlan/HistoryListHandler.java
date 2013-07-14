@@ -129,7 +129,10 @@ public class HistoryListHandler implements OnItemClickListener
 	public HistoryItem getItem(int position)
 	{
 		this.cursor.moveToPosition(position);
+		return getItem(this.cursor);
+	}
 
+	public static HistoryItem getItem(Cursor cursor) {
 		int idColumn = cursor.getColumnIndex(History.Items._ID);
 		int titleColumn = cursor.getColumnIndex(History.Items.TITLE);
 		int macColumn = cursor.getColumnIndex(History.Items.MAC);
@@ -137,6 +140,7 @@ public class HistoryListHandler implements OnItemClickListener
 		int portColumn = cursor.getColumnIndex(History.Items.PORT);
 
 		return new HistoryItem(cursor.getInt(idColumn), cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+
 	}
 
 
