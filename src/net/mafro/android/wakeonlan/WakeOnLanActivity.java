@@ -276,7 +276,7 @@ public class WakeOnLanActivity extends Activity implements OnClickListener, OnTa
 			//check for edit mode - no send of packet
 			if(_editModeID == 0) {
 				//send the magic packet
-				String formattedMac = sendPacket(title, mac, ip, port);
+				String formattedMac = sendPacket(WakeOnLanActivity.this, title, mac, ip, port);
 
 				//on successful send, add to history list
 				if(formattedMac != null) {
@@ -393,10 +393,10 @@ public class WakeOnLanActivity extends Activity implements OnClickListener, OnTa
 
 	public String sendPacket(HistoryItem item)
 	{
-		return sendPacket(item.title, item.mac, item.ip, item.port);
+		return sendPacket(WakeOnLanActivity.this, item.title, item.mac, item.ip, item.port);
 	}
 
-	public String sendPacket(String title, String mac, String ip, int port)
+	public static String sendPacket(Context context,String title, String mac, String ip, int port)
 	{
 		String formattedMac = null;
 
@@ -404,16 +404,16 @@ public class WakeOnLanActivity extends Activity implements OnClickListener, OnTa
 			formattedMac = MagicPacket.send(mac, ip, port);
 
 		}catch(IllegalArgumentException iae) {
-			notifyUser(getString(R.string.send_failed)+":\n"+iae.getMessage(), WakeOnLanActivity.this);
+			notifyUser(context.getString(R.string.send_failed)+":\n"+iae.getMessage(), context);
 			return null;
 
 		}catch(Exception e) {
-			notifyUser(getString(R.string.send_failed), WakeOnLanActivity.this);
+			notifyUser(context.getString(R.string.send_failed), context);
 			return null;
 		}
 
 		//display sent message to user
-		notifyUser(getString(R.string.packet_sent)+" to "+title, WakeOnLanActivity.this);
+		notifyUser(context.getString(R.string.packet_sent)+" to "+title, context);
 		return formattedMac;
 	}
 
