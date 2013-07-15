@@ -48,7 +48,6 @@ import android.util.Log;
 
 /**
  * @desc This class is used to setup the home screen widget, as well as handle click events
- * @rename WidgetProvider
  */
 
 //TODO handle deletion of widgets.
