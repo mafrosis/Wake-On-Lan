@@ -60,20 +60,28 @@ public class WidgetProvider extends AppWidgetProvider {
 	private SharedPreferences settings;
 
 	public WidgetProvider() {
-		Cursor cursor;
 		//Need a context to initlise this.
 		settings = null;
 	}
 
-	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+	/**
+	 * @desc Called when an instance of this class is activated. Do init stuff here
+	 */
+	@overide
+	public void onEnabled(Context context) {
 		if(settings == null) {
 			settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
 		}
+	}
 
-		// Perform this loop procedure for each widget.
+	/**
+	 * @desc this method is called once when the WidgetHost starts (usually when the OS boots).
+	 */
+	@overide
+	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+
 		final int N = appWidgetIds.length;
 		for (int i=0; i<N; i++) {
-			//TODO initlise the widget here.
 			int widget_id = appWidgetIds[i];
 			
 			
@@ -90,11 +98,6 @@ public class WidgetProvider extends AppWidgetProvider {
 	public void onReceive(Context context, Intent intent) {
 		//
 		super.onReceive(context, intent);
-		Log.v(WakeOnLanActivity.TAG, "in onReceive");
-
-		if(settings == null) {
-			settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
-		}
 
 		if (intent.getAction().startsWith(WIDGET_ONCLICK)) {
 
@@ -107,6 +110,7 @@ public class WidgetProvider extends AppWidgetProvider {
 			//get the HistoryItem associated with the widget_id.
 			HistoryItem item = loadItemPref(context, settings, widget_id);
 
+			//send the packet.
 			WakeOnLanActivity.sendPacket(context, 
 						     item.title, 
 						     item.mac, 
@@ -115,6 +119,13 @@ public class WidgetProvider extends AppWidgetProvider {
 		}
 	}
 
+	@Override
+	public void onDelete(Context context, int[] id) {
+		final int N = appWidgetIds.length;
+		for (int i=0; i<N; i++) {
+			deleteItemPref(settings, id[N]);
+		}
+	}
 
 	/**
 	 * @desc gets the widget id from an intent.
@@ -170,6 +181,12 @@ public class WidgetProvider extends AppWidgetProvider {
 		editor.commit();
 	}
 
+	public static void deleteItemPref(SharedPreferences settings, int widget_id) {
+		SharedPreferences.Editor editor = settings.edit();
+		editor.remove(SETTINGS_PREFIX + widget_id);
+		editor.commit();
+	}
+
 	/**
 	 * @desc load the HistoryItem associated with a widget_id.
 	 */
@@ -189,7 +206,7 @@ public class WidgetProvider extends AppWidgetProvider {
 					null, null);
 		if(cursor.getCount() == 0) {
 			//item_id does not exists anymore
-			//TODO delete the prefrence.
+			//TODO copy the item details so that we dont have to worry about this.
 			return null;
 		}
 		cursor.moveToFirst();
