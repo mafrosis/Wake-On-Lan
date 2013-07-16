@@ -65,27 +65,28 @@ public class WidgetProvider extends AppWidgetProvider {
 	/**
 	 * @desc Called when an instance of this class is activated. Do init stuff here
 	 */
-	@overide
+	@Override
 	public void onEnabled(Context context) {
-		if(settings == null) {
-			settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
-		}
+		//FIXME does not seem to have any effect.
+		//initSettings(context);	
 	}
 
 	/**
 	 * @desc this method is called once when the WidgetHost starts (usually when the OS boots).
 	 */
-	@overide
+	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+	
+		initSettings(context);	
 
 		final int N = appWidgetIds.length;
 		for (int i=0; i<N; i++) {
 			int widget_id = appWidgetIds[i];
 			
-			
 			HistoryItem item = loadItemPref(context, settings, widget_id);
 			if(item == null) { // item or prefrences missing.
-				//TODO delete the widget probably.
+				//TODO delete the widget probably (cant find a way to do this).
+				//maybe set the title of the widget to ERROR 
 				continue;
 			}
 			configureWidget(widget_id, item, context);
@@ -97,6 +98,7 @@ public class WidgetProvider extends AppWidgetProvider {
 		//
 		super.onReceive(context, intent);
 
+		initSettings(context);	
 		if (intent.getAction().startsWith(WIDGET_ONCLICK)) {
 
 			//get the widget id
@@ -118,10 +120,11 @@ public class WidgetProvider extends AppWidgetProvider {
 	}
 
 	@Override
-	public void onDelete(Context context, int[] id) {
-		final int N = appWidgetIds.length;
+	public void onDeleted(Context context, int[] id) {
+		initSettings(context);	
+		final int N = id.length;
 		for (int i=0; i<N; i++) {
-			deleteItemPref(settings, id[N]);
+			deleteItemPref(settings, id[i]);
 		}
 	}
 
@@ -161,7 +164,6 @@ public class WidgetProvider extends AppWidgetProvider {
 	
 
 	private static  PendingIntent getPendingSelfIntent(Context context, int widget_id, String action) {
-		//TODO try and set the widget id here. (not sure what this means anymore).
 		Intent intent = new Intent(context, WidgetProvider.class);
 		intent.setAction(action);
 		Bundle bundle = new Bundle();
@@ -211,6 +213,12 @@ public class WidgetProvider extends AppWidgetProvider {
 		HistoryItem item = HistoryListHandler.getItem(cursor);
 		return item;
 
+	}
+
+	private void initSettings(Context context) {
+		if(settings == null) {
+			settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
+		}
 	}
 	
 }
