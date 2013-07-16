@@ -70,7 +70,7 @@ public class WidgetProvider extends AppWidgetProvider {
 	@Override
 	public void onEnabled(Context context) {
 		//FIXME does not seem to have any effect.
-		//initSettings(context);	
+		//initSettings(context);
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class WidgetProvider extends AppWidgetProvider {
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 	
-		initSettings(context);	
+		initSettings(context);
 
 		final int N = appWidgetIds.length;
 		for (int i=0; i<N; i++) {
@@ -88,7 +88,7 @@ public class WidgetProvider extends AppWidgetProvider {
 			HistoryItem item = loadItemPref(context, settings, widget_id);
 			if(item == null) { // item or prefrences missing.
 				//TODO delete the widget probably (cant find a way to do this).
-				//maybe set the title of the widget to ERROR 
+				//maybe set the title of the widget to ERROR
 				continue;
 			}
 			configureWidget(widget_id, item, context);
@@ -100,7 +100,7 @@ public class WidgetProvider extends AppWidgetProvider {
 		//
 		super.onReceive(context, intent);
 
-		initSettings(context);	
+		initSettings(context);
 		if (intent.getAction().startsWith(WIDGET_ONCLICK)) {
 
 			//get the widget id
@@ -123,7 +123,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
 	@Override
 	public void onDeleted(Context context, int[] id) {
-		initSettings(context);	
+		initSettings(context);
 		final int N = id.length;
 		for (int i=0; i<N; i++) {
 			deleteItemPref(settings, id[i]);
@@ -179,13 +179,23 @@ public class WidgetProvider extends AppWidgetProvider {
 	 */
 	public static void saveItemPref(SharedPreferences settings, HistoryItem item, int widget_id) {
 		SharedPreferences.Editor editor = settings.edit();
+
+		//store HistoryItem details in settings
 		editor.putInt(SETTINGS_PREFIX + widget_id, item.id);
+		editor.putString(SETTINGS_PREFIX + widget_id + History.Items.TITLE, item.title);
+		editor.putString(SETTINGS_PREFIX + widget_id + History.Items.MAC, item.mac);
+		editor.putString(SETTINGS_PREFIX + widget_id + History.Items.IP, item.ip);
+		editor.putInt(SETTINGS_PREFIX + widget_id + History.Items.PORT, item.port);
 		editor.commit();
 	}
 
 	public static void deleteItemPref(SharedPreferences settings, int widget_id) {
 		SharedPreferences.Editor editor = settings.edit();
 		editor.remove(SETTINGS_PREFIX + widget_id);
+		editor.remove(SETTINGS_PREFIX + widget_id + History.Items.TITLE);
+		editor.remove(SETTINGS_PREFIX + widget_id + History.Items.MAC);
+		editor.remove(SETTINGS_PREFIX + widget_id + History.Items.IP);
+		editor.remove(SETTINGS_PREFIX + widget_id + History.Items.PORT);
 		editor.commit();
 	}
 
@@ -200,19 +210,13 @@ public class WidgetProvider extends AppWidgetProvider {
 			return null;
 		}
 
-		//Create HistoryItem
-		Cursor cursor = context.getContentResolver()
-				.query(History.Items.CONTENT_URI, 
-					HistoryListHandler.PROJECTION, 
-					History.Items._ID +" = "+item_id,
-					null, null);
-		if(cursor.getCount() == 0) {
-			//item_id does not exists anymore
-			//TODO copy the item details so that we dont have to worry about this.
-			return null;
-		}
-		cursor.moveToFirst();
-		HistoryItem item = HistoryListHandler.getItem(cursor);
+		//TODO check for invalid values.
+		String title = settings.getString(SETTINGS_PREFIX + widget_id + History.Items.TITLE, "");
+		String mac = settings.getString(SETTINGS_PREFIX + widget_id + History.Items.MAC, "");
+		String ip = settings.getString(SETTINGS_PREFIX + widget_id + History.Items.IP, "");
+		int port = settings.getInt(SETTINGS_PREFIX + widget_id + History.Items.PORT, -1);
+
+		HistoryItem item = new HistoryItem(item_id, title, mac, ip, port);
 		return item;
 
 	}
