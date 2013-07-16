@@ -50,8 +50,6 @@ import android.util.Log;
  * @desc This class is used to setup the home screen widget, as well as handle click events
  */
 
-//TODO handle deletion of widgets.
-
 public class WidgetProvider extends AppWidgetProvider {
 
 	public static final String SETTINGS_PREFIX="widget_";
