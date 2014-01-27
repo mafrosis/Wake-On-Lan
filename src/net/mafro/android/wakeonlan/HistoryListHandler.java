@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2008-2012 Matt Black.
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,6 +29,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package net.mafro.android.wakeonlan;
 
+import android.app.Activity;
+
 import android.content.ContentValues;
 
 import android.database.Cursor;
@@ -42,6 +45,9 @@ import android.view.View;
 
 import android.net.Uri;
 
+import java.util.List;
+import java.util.ArrayList;
+
 
 /**
  *	@desc	Class handles all functions of the history ListView
@@ -51,11 +57,13 @@ public class HistoryListHandler implements OnItemClickListener
 
 	public static final String TAG = "HistoryListHandler";
 
-	private WakeOnLanActivity wol;
+	private Activity parent;
 	private Cursor cursor;
 	private HistoryAdapter adapter;
+	private List<HistoryListClickListener> listeners;
 
-	private static final String[] PROJECTION = new String[]
+
+	public static final String[] PROJECTION = new String[]
 	{
 		History.Items._ID,
 		History.Items.TITLE,
@@ -70,10 +78,11 @@ public class HistoryListHandler implements OnItemClickListener
 	private ListView view = null;
 
 
-	public HistoryListHandler(WakeOnLanActivity wol, ListView view)
+	public HistoryListHandler(Activity parent, ListView view)
 	{
-		this.wol = wol;
+		this.parent = parent;
 		this.view = view;
+		this.listeners = new ArrayList<HistoryListClickListener>();
 	}
 
 	public void bind(int sort_mode)
@@ -92,8 +101,8 @@ public class HistoryListHandler implements OnItemClickListener
 		}
 
 		//load History cursor via custom ResourceAdapter
-		cursor = wol.getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, orderBy);
-		adapter = new HistoryAdapter(wol, cursor);
+		cursor = parent.getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, orderBy);
+		adapter = new HistoryAdapter(parent, cursor);
 
 		//register self as listener for item clicks
 		view.setOnItemClickListener(this);
@@ -103,23 +112,27 @@ public class HistoryListHandler implements OnItemClickListener
 	}
 
 
-	public void onItemClick(AdapterView parent, View v, int position, long id)
+	public void onItemClick(AdapterView av, View v, int position, long id)
 	{
 		if(position >= 0) {
 			//extract item at position of click
 			HistoryItem item = getItem(position);
 
-			//update used count in DB
-			if(wol.sendPacket(item) != null) {
-				incrementHistory(id);
+			//Fire onClick event to HistoryListListeners
+			for(HistoryListClickListener l : listeners) {
+				l.onClick(item);
 			}
+			
 		}
 	}
 
 	public HistoryItem getItem(int position)
 	{
 		this.cursor.moveToPosition(position);
+		return getItem(this.cursor);
+	}
 
+	public static HistoryItem getItem(Cursor cursor) {
 		int idColumn = cursor.getColumnIndex(History.Items._ID);
 		int titleColumn = cursor.getColumnIndex(History.Items.TITLE);
 		int macColumn = cursor.getColumnIndex(History.Items.MAC);
@@ -127,6 +140,7 @@ public class HistoryListHandler implements OnItemClickListener
 		int portColumn = cursor.getColumnIndex(History.Items.PORT);
 
 		return new HistoryItem(cursor.getInt(idColumn), cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+
 	}
 
 
@@ -155,7 +169,7 @@ public class HistoryListHandler implements OnItemClickListener
 			values.put(History.Items.MAC, mac);
 			values.put(History.Items.IP, ip);
 			values.put(History.Items.PORT, port);
-			wol.getContentResolver().insert(History.Items.CONTENT_URI, values);
+			this.parent.getContentResolver().insert(History.Items.CONTENT_URI, values);
 		}
 	}
 
@@ -168,7 +182,7 @@ public class HistoryListHandler implements OnItemClickListener
 		values.put(History.Items.PORT, port);
 
 		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(id));
-		wol.getContentResolver().update(itemUri, values, null, null);
+		this.parent.getContentResolver().update(itemUri, values, null, null);
 	}
 
 	public void incrementHistory(long id)
@@ -181,14 +195,22 @@ public class HistoryListHandler implements OnItemClickListener
 		values.put(History.Items.LAST_USED_DATE, Long.valueOf(System.currentTimeMillis()));
 
 		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Long.toString(id));
-		wol.getContentResolver().update(itemUri, values, null, null);
+		this.parent.getContentResolver().update(itemUri, values, null, null);
 	}
 
 	public void deleteHistory(int id)
 	{
 		//use HistoryProvider to remove this row
 		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(id));
-		wol.getContentResolver().delete(itemUri, null, null);
+		this.parent.getContentResolver().delete(itemUri, null, null);
+	}
+
+	public void addHistoryListClickListener(HistoryListClickListener l) {
+		this.listeners.add(l);
+	}
+	
+	public void removeHistoryListClickListener(HistoryListClickListener l) {
+		this.listeners.remove(l);
 	}
 
 }
