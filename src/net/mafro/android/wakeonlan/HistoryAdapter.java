@@ -65,12 +65,15 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 	private Context context;
 	private ContentResolver content;
 
+	boolean showStars;
 
-	public HistoryAdapter(Context context, Cursor cursor)
+
+	public HistoryAdapter(Context context, Cursor cursor, boolean showStars)
 	{
 		super(context, R.layout.history_row, cursor);
 		this.context = context;
 		this.content = context.getContentResolver();
+		this.showStars = showStars;
 	}
 
 
@@ -97,19 +100,27 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 		vip.setText(cursor.getString(ipColumn));
 		vport.setText(Integer.toString(cursor.getInt(portColumn)));
 
-		//remove click handler to prevent recursive calls
-		star.setOnCheckedChangeListener(null);
+		if(this.showStars == true) {
+			//remove click handler to prevent recursive calls
+			star.setOnCheckedChangeListener(null);
 
-		//change the star state if different
-		boolean starred = (cursor.getInt(isStarredColumn) != 0);	//non-zero == true
-		star.setChecked(starred);
-		star.render();
+			//change the star state if different
+			boolean starred = (cursor.getInt(isStarredColumn) != 0);	//non-zero == true
+			star.setChecked(starred);
+			star.render();
 
-		//add event listener to star button
-		star.setOnCheckedChangeListener(this);
+			//add event listener to star button
+			star.setOnCheckedChangeListener(this);
 
-		//save our record _ID in the star's tag
-		star.setTag(cursor.getInt(idColumn));
+			//save our record _ID in the star's tag
+			star.setTag(cursor.getInt(idColumn));
+
+		}else{
+			//disable the star button
+			star.setClickable(false);
+			star.noRender = true;
+			star.render();
+		}
 	}
 
 

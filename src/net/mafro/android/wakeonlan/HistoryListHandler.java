@@ -100,9 +100,15 @@ public class HistoryListHandler implements OnItemClickListener
 			break;
 		}
 
+		//determine if we render the favourite star buttons
+		boolean showStars = false;
+		if(parent instanceof WakeOnLanActivity) {
+			showStars = true;
+		}
+
 		//load History cursor via custom ResourceAdapter
 		cursor = parent.getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, orderBy);
-		adapter = new HistoryAdapter(parent, cursor);
+		adapter = new HistoryAdapter(parent, cursor, showStars);
 
 		//register self as listener for item clicks
 		view.setOnItemClickListener(this);
