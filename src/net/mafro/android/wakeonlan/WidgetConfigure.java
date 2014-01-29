@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013 Yohan Pereira.
+Copyright (C) 2013-2014 Yohan Pereira, Matt Black
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,6 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-
 package net.mafro.android.wakeonlan;
 
 import android.app.Activity;
@@ -46,10 +45,13 @@ import android.widget.ListView;
 import android.widget.RemoteViews;
 
 /**
- * @desc This class is used to configure the home screen widget.
+ * @desc	This class is used to configure the home screen widget
  */
 public class WidgetConfigure extends Activity
 {
+
+	public static final String TAG = "WidgetConfigure";
+
 	private HistoryListHandler historyListHandler;
 	private int widget_id;
 	private SharedPreferences settings;
@@ -66,40 +68,36 @@ public class WidgetConfigure extends Activity
 		settings = getSharedPreferences(WakeOnLanActivity.TAG, 0);
 		int sort_mode = settings.getInt("sort_mode", WakeOnLanActivity.CREATED);
 		historyListHandler.bind(sort_mode);
-		//Add on click listener
-		historyListHandler.addHistoryListClickListener(new HistoryListClickListener () {
 
+		// add on click listener
+		historyListHandler.addHistoryListClickListener(new HistoryListClickListener () {
 			public void onClick(HistoryItem item) {
 				selected(item);
 			}
 		});
 
-		//get the widget id
+		// get the widget id
 		Intent intent = getIntent();
 		widget_id = WidgetProvider.getWidgetId(intent);
 
 		if(widget_id == AppWidgetManager.INVALID_APPWIDGET_ID) {
-			//No valid widget id .. bailling.
+			// no valid widget id; bailing
 			finish();
 		}
-
 	}
 
-	private void selected(HistoryItem item) {
+	private void selected(HistoryItem item)
+	{
 		// save selected item id to the settings.
 		WidgetProvider.saveItemPref(settings, item, widget_id);	
 
 		// configure the widget
 		WidgetProvider.configureWidget(widget_id, item, this);
 
-		//return result
 		Intent resultValue = new Intent();
 		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widget_id);
-            	setResult(RESULT_OK, resultValue);
-            	finish();
-
+		setResult(RESULT_OK, resultValue);
+		finish();
 	}
 
-	
-	
 }

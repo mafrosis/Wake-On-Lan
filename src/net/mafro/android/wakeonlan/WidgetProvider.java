@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013 Yohan Pereira.
+Copyright (C) 2013-2014 Yohan Pereira, Matt Black
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,9 +26,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-
 package net.mafro.android.wakeonlan;
-
 
 import android.app.PendingIntent;
 
@@ -47,48 +45,55 @@ import android.widget.RemoteViews;
 import android.util.Log;
 
 /**
- * @desc This class is used to setup the home screen widget, as well as handle click events
+ * @desc	This class is used to setup the home screen widget, as well as handle click events
  */
 
-//TODO handle deletion of widgets.
+// TODO handle deletion of widgets.
 
-public class WidgetProvider extends AppWidgetProvider {
+public class WidgetProvider extends AppWidgetProvider
+{
 
-	public static final String SETTINGS_PREFIX="widget_";
-	public static final String WIDGET_ONCLICK="net.mafro.android.wakeonlan.WidgetOnClick";
+	public static final String TAG = "WidgetProvider";
+
+	public static final String SETTINGS_PREFIX = "widget_";
+	public static final String WIDGET_ONCLICK = "net.mafro.android.wakeonlan.WidgetOnClick";
 
 	private SharedPreferences settings;
 
-	public WidgetProvider() {
-		//Need a context to initlise this.
+
+	public WidgetProvider()
+	{
+		// need a context to initlise this.
 		settings = null;
 	}
 
 	/**
-	 * @desc Called when an instance of this class is activated. Do init stuff here
+	 * @desc	Called when an instance of this class is activated. Do init stuff here
 	 */
 	@Override
-	public void onEnabled(Context context) {
-		//FIXME does not seem to have any effect.
+	public void onEnabled(Context context)
+	{
+		// FIXME does not seem to have any effect.
 		//initSettings(context);
 	}
 
 	/**
-	 * @desc this method is called once when the WidgetHost starts (usually when the OS boots).
+	 * @desc	this method is called once when the WidgetHost starts (usually when the OS boots).
 	 */
 	@Override
-	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-	
+	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
+	{
 		initSettings(context);
 
 		final int N = appWidgetIds.length;
-		for (int i=0; i<N; i++) {
+		for(int i=0; i<N; i++) {
 			int widget_id = appWidgetIds[i];
-			
+
 			HistoryItem item = loadItemPref(context, settings, widget_id);
-			if(item == null) { // item or prefrences missing.
-				//TODO delete the widget probably (cant find a way to do this).
-				//maybe set the title of the widget to ERROR
+			if(item == null) {
+				// item or prefrences missing.
+				// TODO delete the widget probably (cant find a way to do this).
+				// maybe set the title of the widget to ERROR
 				continue;
 			}
 			configureWidget(widget_id, item, context);
@@ -96,76 +101,70 @@ public class WidgetProvider extends AppWidgetProvider {
 	}
 
 	@Override
-	public void onReceive(Context context, Intent intent) {
-		//
+	public void onReceive(Context context, Intent intent)
+	{
 		super.onReceive(context, intent);
 
 		initSettings(context);
-		if (intent.getAction().startsWith(WIDGET_ONCLICK)) {
 
-			//get the widget id
+		if(intent.getAction().startsWith(WIDGET_ONCLICK)) {
+			// get the widget id
 			int widget_id = getWidgetId(intent);
 			if(widget_id == AppWidgetManager.INVALID_APPWIDGET_ID) {
 				return;
 			}
-			
-			//get the HistoryItem associated with the widget_id.
+
+			// get the HistoryItem associated with the widget_id
 			HistoryItem item = loadItemPref(context, settings, widget_id);
 
-			//send the packet.
-			WakeOnLanActivity.sendPacket(context, 
-						     item.title, 
-						     item.mac, 
-						     item.ip, 
-						     item.port);
+			// send the packet
+			WakeOnLanActivity.sendPacket(context, item.title, item.mac, item.ip, item.port);
 		}
 	}
 
 	@Override
-	public void onDeleted(Context context, int[] id) {
+	public void onDeleted(Context context, int[] id)
+	{
 		initSettings(context);
 		final int N = id.length;
-		for (int i=0; i<N; i++) {
+		for(int i=0; i<N; i++) {
 			deleteItemPref(settings, id[i]);
 		}
 	}
 
 	/**
-	 * @desc gets the widget id from an intent.
+	 * @desc	gets the widget id from an intent
 	 */
-	public static int getWidgetId(Intent intent) {
+	public static int getWidgetId(Intent intent)
+	{
 		Bundle extras = intent.getExtras();
 		int _widget_id = AppWidgetManager.INVALID_APPWIDGET_ID;
-		if (extras != null) {
-			_widget_id = extras.getInt(
-					AppWidgetManager.EXTRA_APPWIDGET_ID, 
-					AppWidgetManager.INVALID_APPWIDGET_ID);
-
+		if(extras != null) {
+			_widget_id = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		}
 		return _widget_id;	
 	}
 
 	/**
-	 * @desc configures a widget for the first time. Usually called when creating a widget
-	 *	 for the first time or initlising existing widgets when the AppWidgetManager 
-	 *	restarts (usually when the phone reboots).
+	 * @desc	configures a widget for the first time. Usually called when creating a widget
+	 *				for the first time or initialising existing widgets when the AppWidgetManager
+	 *				restarts (usually when the phone reboots).
 	 */
-	public static void configureWidget(int widget_id, HistoryItem item, Context context) {
-
-		RemoteViews views = new RemoteViews(context.getPackageName(),
-		R.layout.widget);
+	public static void configureWidget(int widget_id, HistoryItem item, Context context)
+	{
+		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
 		views.setTextViewText(R.id.appwidget_text, item.title);
-		//FIXME hack : append id to action  to prevent clearing the extras bundle. 
+
+		// FIXME hack : append id to action  to prevent clearing the extras bundle.
 		views.setOnClickPendingIntent(R.id.appwidget_button, getPendingSelfIntent(context, widget_id, WIDGET_ONCLICK + widget_id));
 
-		//tell the widget manager
+		// tell the widget manager
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 		appWidgetManager.updateAppWidget(widget_id, views);
 	}
-	
-	
 
-	private static  PendingIntent getPendingSelfIntent(Context context, int widget_id, String action) {
+	private static PendingIntent getPendingSelfIntent(Context context, int widget_id, String action)
+	{
 		Intent intent = new Intent(context, WidgetProvider.class);
 		intent.setAction(action);
 		Bundle bundle = new Bundle();
@@ -173,14 +172,15 @@ public class WidgetProvider extends AppWidgetProvider {
 		intent.putExtras(bundle);
 		return PendingIntent.getBroadcast(context, 0, intent, 0);
 	}
-	
+
 	/**
-	 * @desc saves the given history item/widget_id combination.
+	 * @desc	saves the given history item/widget_id combination
 	 */
-	public static void saveItemPref(SharedPreferences settings, HistoryItem item, int widget_id) {
+	public static void saveItemPref(SharedPreferences settings, HistoryItem item, int widget_id)
+	{
 		SharedPreferences.Editor editor = settings.edit();
 
-		//store HistoryItem details in settings
+		// store HistoryItem details in settings
 		editor.putInt(SETTINGS_PREFIX + widget_id, item.id);
 		editor.putString(SETTINGS_PREFIX + widget_id + History.Items.TITLE, item.title);
 		editor.putString(SETTINGS_PREFIX + widget_id + History.Items.MAC, item.mac);
@@ -189,7 +189,8 @@ public class WidgetProvider extends AppWidgetProvider {
 		editor.commit();
 	}
 
-	public static void deleteItemPref(SharedPreferences settings, int widget_id) {
+	public static void deleteItemPref(SharedPreferences settings, int widget_id)
+	{
 		SharedPreferences.Editor editor = settings.edit();
 		editor.remove(SETTINGS_PREFIX + widget_id);
 		editor.remove(SETTINGS_PREFIX + widget_id + History.Items.TITLE);
@@ -200,25 +201,24 @@ public class WidgetProvider extends AppWidgetProvider {
 	}
 
 	/**
-	 * @desc load the HistoryItem associated with a widget_id.
+	 * @desc	load the HistoryItem associated with a widget_id
 	 */
-	public static HistoryItem loadItemPref(Context context, SharedPreferences settings, int widget_id) {
-		//get item_id
+	public static HistoryItem loadItemPref(Context context, SharedPreferences settings, int widget_id)
+	{
+		// get item_id
 		int item_id = settings.getInt(SETTINGS_PREFIX + widget_id, -1);
+
 		if(item_id == -1) {
-			//No item_id found for given widget return null.
+			// No item_id found for given widget return null
 			return null;
 		}
 
-		//TODO check for invalid values.
 		String title = settings.getString(SETTINGS_PREFIX + widget_id + History.Items.TITLE, "");
 		String mac = settings.getString(SETTINGS_PREFIX + widget_id + History.Items.MAC, "");
 		String ip = settings.getString(SETTINGS_PREFIX + widget_id + History.Items.IP, "");
 		int port = settings.getInt(SETTINGS_PREFIX + widget_id + History.Items.PORT, -1);
 
-		HistoryItem item = new HistoryItem(item_id, title, mac, ip, port);
-		return item;
-
+		return new HistoryItem(item_id, title, mac, ip, port);
 	}
 
 	private void initSettings(Context context) {
@@ -226,5 +226,5 @@ public class WidgetProvider extends AppWidgetProvider {
 			settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
 		}
 	}
-	
+
 }

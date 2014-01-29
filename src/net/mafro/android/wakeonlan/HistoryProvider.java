@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2008-2012 Matt Black.
+Copyright (C) 2008-2014 Matt Black
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -116,19 +116,19 @@ public class HistoryProvider extends ContentProvider {
 		qb.setTables(HISTORY_TABLE_NAME);
 		qb.setProjectionMap(sHistoryProjectionMap);
 
-		// If no sort order is specified use the default
+		// if no sort order is specified use the default
 		String orderBy;
-		if (TextUtils.isEmpty(sortOrder)) {
+		if(TextUtils.isEmpty(sortOrder)) {
 			orderBy = History.Items.DEFAULT_SORT_ORDER;
 		}else{
 			orderBy = sortOrder;
 		}
 
-		// Get the database and run the query
+		// get the database and run the query
 		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 		Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
 
-		// Tell the cursor what uri to watch, so it knows when its source data changes
+		// tell the cursor what uri to watch, so it knows when its source data changes
 		c.setNotificationUri(getContext().getContentResolver(), uri);
 		return c;
 	}
@@ -136,26 +136,26 @@ public class HistoryProvider extends ContentProvider {
 	@Override
 	public String getType(Uri uri) {
 		switch (sUriMatcher.match(uri)) {
-		case HISTORY:
-			return History.Items.CONTENT_TYPE;
+			case HISTORY:
+				return History.Items.CONTENT_TYPE;
 
-		case HISTORY_ID:
-			return History.Items.CONTENT_ITEM_TYPE;
+			case HISTORY_ID:
+				return History.Items.CONTENT_ITEM_TYPE;
 
-		default:
-			throw new IllegalArgumentException("Unknown URI " + uri);
+			default:
+				throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 	}
 
 	@Override
 	public Uri insert(Uri uri, ContentValues initialValues) {
-		// Validate the requested uri
-		if (sUriMatcher.match(uri) != HISTORY) {
+		// validate the requested uri
+		if(sUriMatcher.match(uri) != HISTORY) {
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 
 		ContentValues values;
-		if (initialValues != null) {
+		if(initialValues != null) {
 			values = new ContentValues(initialValues);
 		} else {
 			values = new ContentValues();
@@ -163,7 +163,7 @@ public class HistoryProvider extends ContentProvider {
 
 		Long now = Long.valueOf(System.currentTimeMillis());
 
-		// Make sure that the fields are all set
+		// make sure that the fields are all set
 		if(values.containsKey(History.Items.TITLE) == false) {
 			values.put(History.Items.TITLE, "");
 		}
@@ -185,9 +185,9 @@ public class HistoryProvider extends ContentProvider {
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
-		//insert record, 2nd param is NULLABLE field for if values is empty
+		// insert record, 2nd param is NULLABLE field for if values is empty
 		long rowId = db.insert(HISTORY_TABLE_NAME, History.Items.MAC, values);
-		if (rowId > 0) {
+		if(rowId > 0) {
 			Uri histUri = ContentUris.withAppendedId(History.Items.CONTENT_URI, rowId);
 			getContext().getContentResolver().notifyChange(histUri, null);
 			return histUri;
@@ -201,18 +201,18 @@ public class HistoryProvider extends ContentProvider {
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		int count;
 		switch (sUriMatcher.match(uri)) {
-		case HISTORY:
-			count = db.delete(HISTORY_TABLE_NAME, where, whereArgs);
-			break;
+			case HISTORY:
+				count = db.delete(HISTORY_TABLE_NAME, where, whereArgs);
+				break;
 
-		case HISTORY_ID:
-			String histId = uri.getPathSegments().get(1);
-			count = db.delete(HISTORY_TABLE_NAME, History.Items._ID + "=" + histId
-					+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
-			break;
+			case HISTORY_ID:
+				String histId = uri.getPathSegments().get(1);
+				count = db.delete(HISTORY_TABLE_NAME, History.Items._ID + "=" + histId
+						+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+				break;
 
-		default:
-			throw new IllegalArgumentException("Unknown URI " + uri);
+			default:
+				throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 
 		getContext().getContentResolver().notifyChange(uri, null);
@@ -225,17 +225,17 @@ public class HistoryProvider extends ContentProvider {
 
 		int count;
 		switch (sUriMatcher.match(uri)) {
-		case HISTORY:
-			count = db.update(HISTORY_TABLE_NAME, values, where, whereArgs);
-			break;
+			case HISTORY:
+				count = db.update(HISTORY_TABLE_NAME, values, where, whereArgs);
+				break;
 
-		case HISTORY_ID:
-			String historyId = uri.getPathSegments().get(1);
-			count = db.update(HISTORY_TABLE_NAME, values, History.Items._ID + "=" + historyId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
-			break;
+			case HISTORY_ID:
+				String historyId = uri.getPathSegments().get(1);
+				count = db.update(HISTORY_TABLE_NAME, values, History.Items._ID + "=" + historyId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+				break;
 
-		default:
-			throw new IllegalArgumentException("Unknown URI " + uri);
+			default:
+				throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 
 		getContext().getContentResolver().notifyChange(uri, null);

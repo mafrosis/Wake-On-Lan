@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2008-2012 Matt Black.
+Copyright (C) 2008-2014 Matt Black
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -85,7 +85,7 @@ public class StarButton extends CompoundButton implements OnCheckedChangeListene
 
 	public void render()
 	{
-		//render the icon on this button
+		// render the icon on this button
 		if(noRender == true) {
 			setButtonDrawable(android.R.color.transparent);
 		}else if(isChecked() == true) {

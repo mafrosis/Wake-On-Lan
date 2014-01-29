@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013 Yohan Pereira.
+Copyright (C) 2013-2014 Yohan Pereira, Matt Black
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,16 +29,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package net.mafro.android.wakeonlan;
 
 /**
- * @desc HistoryListClickListener defines the interface for an object that listens to 
- *	 onClick events on the HistoryList.
+ * @desc	HistoryListClickListener defines the interface for an object that
+ * 				listens to onClick events on the HistoryList
  */
-
 interface HistoryListClickListener {
 
-	/**
-	 * called whenever an item is clicked
-	 * @param item HistoryItem that was clicked.
-	 */
 	void onClick(HistoryItem item);
 
 }

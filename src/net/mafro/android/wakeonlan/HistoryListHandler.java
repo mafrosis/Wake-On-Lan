@@ -1,6 +1,5 @@
 /*
-Copyright (C) 2008-2012 Matt Black.
-
+Copyright (C) 2008-2014 Matt Black
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -89,28 +88,28 @@ public class HistoryListHandler implements OnItemClickListener
 	{
 		String orderBy = null;
 		switch (sort_mode) {
-		case WakeOnLanActivity.CREATED:
-			orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.CREATED_DATE+" DESC";
-			break;
-		case WakeOnLanActivity.LAST_USED:
-			orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.LAST_USED_DATE+" DESC";
-			break;
-		case WakeOnLanActivity.USED_COUNT:
-			orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.USED_COUNT+" DESC";
-			break;
+			case WakeOnLanActivity.CREATED:
+				orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.CREATED_DATE+" DESC";
+				break;
+			case WakeOnLanActivity.LAST_USED:
+				orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.LAST_USED_DATE+" DESC";
+				break;
+			case WakeOnLanActivity.USED_COUNT:
+				orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.USED_COUNT+" DESC";
+				break;
 		}
 
-		//determine if we render the favourite star buttons
+		// determine if we render the favourite star buttons
 		boolean showStars = false;
 		if(parent instanceof WakeOnLanActivity) {
 			showStars = true;
 		}
 
-		//load History cursor via custom ResourceAdapter
+		// load History cursor via custom ResourceAdapter
 		cursor = parent.getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, orderBy);
 		adapter = new HistoryAdapter(parent, cursor, showStars);
 
-		//register self as listener for item clicks
+		// register self as listener for item clicks
 		view.setOnItemClickListener(this);
 
 		// bind to the supplied view
@@ -121,14 +120,13 @@ public class HistoryListHandler implements OnItemClickListener
 	public void onItemClick(AdapterView av, View v, int position, long id)
 	{
 		if(position >= 0) {
-			//extract item at position of click
+			// extract item at position of click
 			HistoryItem item = getItem(position);
 
-			//Fire onClick event to HistoryListListeners
+			// fire onClick event to HistoryListListeners
 			for(HistoryListClickListener l : listeners) {
 				l.onClick(item);
 			}
-			
 		}
 	}
 
@@ -138,7 +136,8 @@ public class HistoryListHandler implements OnItemClickListener
 		return getItem(this.cursor);
 	}
 
-	public static HistoryItem getItem(Cursor cursor) {
+	public static HistoryItem getItem(Cursor cursor)
+	{
 		int idColumn = cursor.getColumnIndex(History.Items._ID);
 		int titleColumn = cursor.getColumnIndex(History.Items.TITLE);
 		int macColumn = cursor.getColumnIndex(History.Items.MAC);
@@ -146,15 +145,13 @@ public class HistoryListHandler implements OnItemClickListener
 		int portColumn = cursor.getColumnIndex(History.Items.PORT);
 
 		return new HistoryItem(cursor.getInt(idColumn), cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
-
 	}
-
 
 	public void addToHistory(String title, String mac, String ip, int port)
 	{
 		boolean exists = false;
 
-		//don't allow duplicates in history list
+		// don't allow duplicates in history list
 		if(cursor.moveToFirst()) {
 			int macColumn = cursor.getColumnIndex(History.Items.MAC);
 			int ipColumn = cursor.getColumnIndex(History.Items.IP);
@@ -168,7 +165,7 @@ public class HistoryListHandler implements OnItemClickListener
 			} while (cursor.moveToNext());
 		}
 
-		//create only if the item doesn't exist
+		// create only if the item doesn't exist
 		if(exists == false) {
 			ContentValues values = new ContentValues(4);
 			values.put(History.Items.TITLE, title);
@@ -206,16 +203,18 @@ public class HistoryListHandler implements OnItemClickListener
 
 	public void deleteHistory(int id)
 	{
-		//use HistoryProvider to remove this row
+		// use HistoryProvider to remove this row
 		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(id));
 		this.parent.getContentResolver().delete(itemUri, null, null);
 	}
 
-	public void addHistoryListClickListener(HistoryListClickListener l) {
+	public void addHistoryListClickListener(HistoryListClickListener l)
+	{
 		this.listeners.add(l);
 	}
-	
-	public void removeHistoryListClickListener(HistoryListClickListener l) {
+
+	public void removeHistoryListClickListener(HistoryListClickListener l)
+	{
 		this.listeners.remove(l);
 	}
 

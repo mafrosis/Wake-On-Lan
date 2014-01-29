@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2008-2012 Matt Black.
+Copyright (C) 2008-2014 Matt Black
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -63,10 +63,10 @@ public class MagicPacket
 
 	public static String send(String mac, String ip, int port) throws UnknownHostException, SocketException, IOException, IllegalArgumentException
 	{
-		//validate MAC and chop into array
+		// validate MAC and chop into array
 		final String[] hex = validateMac(mac);
 
-		//convert to base16 bytes
+		// convert to base16 bytes
 		final byte[] macBytes = new byte[6];
 		for(int i=0; i<6; i++) {
 			macBytes[i] = (byte) Integer.parseInt(hex[i], 16);
@@ -74,16 +74,16 @@ public class MagicPacket
 
 		final byte[] bytes = new byte[102];
 
-		//fill first 6 bytes
+		// fill first 6 bytes
 		for(int i=0; i<6; i++) {
 			bytes[i] = (byte) 0xff;
 		}
-		//fill remaining bytes with target MAC
+		// fill remaining bytes with target MAC
 		for(int i=6; i<bytes.length; i+=macBytes.length) {
 			System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
 		}
 
-		//create socket to IP
+		// create socket to IP
 		final InetAddress address = InetAddress.getByName(ip);
 		final DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, port);
 		final DatagramSocket socket = new DatagramSocket();
@@ -126,10 +126,10 @@ public class MagicPacket
 
 	private static String[] validateMac(String mac) throws IllegalArgumentException
 	{
-		//error handle semi colons
+		// error handle semi colons
 		mac = mac.replace(";", ":");
 
-		//attempt to assist the user a little
+		// attempt to assist the user a little
 		String newMac = "";
 
 		if(mac.matches("([a-zA-Z0-9]){12}")) {
@@ -144,7 +144,7 @@ public class MagicPacket
 			newMac = mac;
 		}
 
-		//regexp pattern match a valid MAC address
+		// regexp pattern match a valid MAC address
 		final Pattern pat = Pattern.compile("((([0-9a-fA-F]){2}[-:]){5}([0-9a-fA-F]){2})");
 		final Matcher m = pat.matcher(newMac);
 
@@ -157,7 +157,7 @@ public class MagicPacket
 	}
 
 	public static void main(String[] args) {
-		if (args.length != 2) {
+		if(args.length != 2) {
 			System.out.println("Usage: java MagicPacket <broadcast-ip> <mac-address>");
 			System.out.println("Example: java MagicPacket 192.168.0.255 00:0D:61:08:22:4A");
 			System.out.println("Example: java MagicPacket 192.168.0.255 00-0D-61-08-22-4A");
