@@ -62,6 +62,8 @@ public class WidgetProvider extends AppWidgetProvider
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
+		super.onUpdate(context, appWidgetManager, appWidgetIds);
+
 		SharedPreferences settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
 
 		final int N = appWidgetIds.length;
@@ -104,6 +106,8 @@ public class WidgetProvider extends AppWidgetProvider
 	@Override
 	public void onDeleted(Context context, int[] id)
 	{
+		super.onDeleted(context, id);
+
 		SharedPreferences settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
 
 		final int N = id.length;
