@@ -138,13 +138,14 @@ public class HistoryListHandler implements OnItemClickListener
 
 	public static HistoryItem getItem(Cursor cursor)
 	{
-		int idColumn = cursor.getColumnIndex(History.Items._ID);
-		int titleColumn = cursor.getColumnIndex(History.Items.TITLE);
-		int macColumn = cursor.getColumnIndex(History.Items.MAC);
-		int ipColumn = cursor.getColumnIndex(History.Items.IP);
-		int portColumn = cursor.getColumnIndex(History.Items.PORT);
-
-		return new HistoryItem(cursor.getInt(idColumn), cursor.getString(titleColumn), cursor.getString(macColumn), cursor.getString(ipColumn), cursor.getInt(portColumn));
+		return new HistoryItem(
+			cursor.getInt(cursor.getColumnIndex(History.Items._ID)),
+			cursor.getString(cursor.getColumnIndex(History.Items.TITLE)),
+			cursor.getString(cursor.getColumnIndex(History.Items.MAC)),
+			cursor.getString(cursor.getColumnIndex(History.Items.IP)),
+			cursor.getInt(cursor.getColumnIndex(History.Items.PORT)),
+			cursor.getInt(cursor.getColumnIndex(History.Items.WIDGET_ID))
+		);
 	}
 
 	public void addToHistory(String title, String mac, String ip, int port)
@@ -190,10 +191,9 @@ public class HistoryListHandler implements OnItemClickListener
 
 	public void incrementHistory(long id)
 	{
-		int usedCountColumn = cursor.getColumnIndex(History.Items.USED_COUNT);
-		int usedCount = cursor.getInt(usedCountColumn);
+		int usedCount = cursor.getInt(cursor.getColumnIndex(History.Items.USED_COUNT));
 
-		ContentValues values = new ContentValues(1);
+		ContentValues values = new ContentValues(2);
 		values.put(History.Items.USED_COUNT, usedCount+1);
 		values.put(History.Items.LAST_USED_DATE, Long.valueOf(System.currentTimeMillis()));
 
