@@ -41,13 +41,15 @@ public class HistoryItem
 	public String mac;
 	public String ip;
 	public int port;
+	public int widget_id;
 
-	public HistoryItem(int id, String title, String mac, String ip, int port)
+	public HistoryItem(int id, String title, String mac, String ip, int port, int widget_id)
 	{
 		this.id = id;
 		this.title = title;
 		this.mac = mac;
 		this.ip = ip;
 		this.port = port;
+		this.widget_id = widget_id;
 	}
 }

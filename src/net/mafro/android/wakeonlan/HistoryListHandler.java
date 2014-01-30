@@ -71,7 +71,8 @@ public class HistoryListHandler implements OnItemClickListener
 		History.Items.PORT,
 		History.Items.LAST_USED_DATE,
 		History.Items.USED_COUNT,
-		History.Items.IS_STARRED
+		History.Items.IS_STARRED,
+		History.Items.WIDGET_ID
 	};
 
 	private ListView view = null;

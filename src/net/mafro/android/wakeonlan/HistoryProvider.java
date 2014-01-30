@@ -58,7 +58,7 @@ public class HistoryProvider extends ContentProvider {
 	private static final String TAG = "HistoryProvider";
 
 	private static final String DATABASE_NAME = "wakeonlan_history.db";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 
 	private static HashMap<String, String> sHistoryProjectionMap;
 
@@ -89,15 +89,26 @@ public class HistoryProvider extends ContentProvider {
 					+ History.Items.CREATED_DATE + " INTEGER,"
 					+ History.Items.LAST_USED_DATE + " INTEGER,"
 					+ History.Items.USED_COUNT + " INTEGER DEFAULT 1,"
-					+ History.Items.IS_STARRED + " INTEGER DEFAULT 0"
+					+ History.Items.IS_STARRED + " INTEGER DEFAULT 0,"
+					+ History.Items.WIDGET_ID + " INTEGER DEFAULT 0"
 					+ ");");
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			if((oldVersion == 1) && (newVersion == 2)) {
+			if(oldVersion == 1) {
+				// upgrade from v1 to v2
 				db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.USED_COUNT + " INTEGER DEFAULT 1;");
 				db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.IS_STARRED + " INTEGER DEFAULT 0;");
+
+				// extra command for upgrade to v3
+				if(newVersion == 3) {
+					db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.WIDGET_ID + " INTEGER DEFAULT 0;");
+				}
+
+			}else if(oldVersion == 2) {
+				// upgrade to v3
+				db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.WIDGET_ID + " INTEGER DEFAULT 0;");
 			}
 		}
 	}
@@ -257,6 +268,7 @@ public class HistoryProvider extends ContentProvider {
 		sHistoryProjectionMap.put(History.Items.LAST_USED_DATE, History.Items.LAST_USED_DATE);
 		sHistoryProjectionMap.put(History.Items.USED_COUNT, History.Items.USED_COUNT);
 		sHistoryProjectionMap.put(History.Items.IS_STARRED, History.Items.IS_STARRED);
+		sHistoryProjectionMap.put(History.Items.WIDGET_ID, History.Items.WIDGET_ID);
 	}
 
 }
