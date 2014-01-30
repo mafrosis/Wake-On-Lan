@@ -61,6 +61,11 @@ public class WidgetConfigure extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+
+		// Set the result to CANCELED.  This will cause the widget host to cancel
+		// out of the widget placement if they press the back button.
+		setResult(RESULT_CANCELED);
+
 		setContentView(R.layout.widget_configure);
 		ListView lv = (ListView)findViewById(R.id.history);
 		historyListHandler = new HistoryListHandler(this, lv);
