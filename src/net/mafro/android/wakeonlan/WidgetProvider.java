@@ -48,8 +48,6 @@ import android.util.Log;
  * @desc	This class is used to setup the home screen widget, as well as handle click events
  */
 
-// TODO handle deletion of widgets.
-
 public class WidgetProvider extends AppWidgetProvider
 {
 
@@ -58,32 +56,13 @@ public class WidgetProvider extends AppWidgetProvider
 	public static final String SETTINGS_PREFIX = "widget_";
 	public static final String WIDGET_ONCLICK = "net.mafro.android.wakeonlan.WidgetOnClick";
 
-	private SharedPreferences settings;
-
-
-	public WidgetProvider()
-	{
-		// need a context to initlise this.
-		settings = null;
-	}
-
-	/**
-	 * @desc	Called when an instance of this class is activated. Do init stuff here
-	 */
-	@Override
-	public void onEnabled(Context context)
-	{
-		// FIXME does not seem to have any effect.
-		//initSettings(context);
-	}
-
 	/**
 	 * @desc	this method is called once when the WidgetHost starts (usually when the OS boots).
 	 */
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
-		initSettings(context);
+		SharedPreferences settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
 
 		final int N = appWidgetIds.length;
 		for(int i=0; i<N; i++) {
@@ -105,9 +84,9 @@ public class WidgetProvider extends AppWidgetProvider
 	{
 		super.onReceive(context, intent);
 
-		initSettings(context);
-
 		if(intent.getAction().startsWith(WIDGET_ONCLICK)) {
+			SharedPreferences settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
+
 			// get the widget id
 			int widget_id = getWidgetId(intent);
 			if(widget_id == AppWidgetManager.INVALID_APPWIDGET_ID) {
@@ -125,7 +104,8 @@ public class WidgetProvider extends AppWidgetProvider
 	@Override
 	public void onDeleted(Context context, int[] id)
 	{
-		initSettings(context);
+		SharedPreferences settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
+
 		final int N = id.length;
 		for(int i=0; i<N; i++) {
 			deleteItemPref(settings, id[i]);
@@ -138,11 +118,10 @@ public class WidgetProvider extends AppWidgetProvider
 	public static int getWidgetId(Intent intent)
 	{
 		Bundle extras = intent.getExtras();
-		int _widget_id = AppWidgetManager.INVALID_APPWIDGET_ID;
 		if(extras != null) {
-			_widget_id = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+			return extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		}
-		return _widget_id;	
+		return AppWidgetManager.INVALID_APPWIDGET_ID;
 	}
 
 	/**
@@ -155,7 +134,7 @@ public class WidgetProvider extends AppWidgetProvider
 		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
 		views.setTextViewText(R.id.appwidget_text, item.title);
 
-		// FIXME hack : append id to action  to prevent clearing the extras bundle.
+		// append id to action to prevent clearing the extras bundle
 		views.setOnClickPendingIntent(R.id.appwidget_button, getPendingSelfIntent(context, widget_id, WIDGET_ONCLICK + widget_id));
 
 		// tell the widget manager
@@ -219,12 +198,6 @@ public class WidgetProvider extends AppWidgetProvider
 		int port = settings.getInt(SETTINGS_PREFIX + widget_id + History.Items.PORT, -1);
 
 		return new HistoryItem(item_id, title, mac, ip, port);
-	}
-
-	private void initSettings(Context context) {
-		if(settings == null) {
-			settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
-		}
 	}
 
 }
