@@ -31,11 +31,9 @@ package net.mafro.android.wakeonlan;
 import android.os.Bundle;
 
 import android.content.Context;
-import android.content.ContentResolver;
+import android.content.ContentValues;
 
 import android.database.Cursor;
-
-import android.content.ContentValues;
 
 import android.net.Uri;
 
@@ -63,7 +61,6 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 	private static final String TAG = "HistoryAdapter";
 
 	private Context context;
-	private ContentResolver content;
 
 	boolean showStars;
 
@@ -72,7 +69,6 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 	{
 		super(context, R.layout.history_row, cursor);
 		this.context = context;
-		this.content = context.getContentResolver();
 		this.showStars = showStars;
 	}
 
@@ -142,7 +138,7 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 		values.put(History.Items.IS_STARRED, value);
 
 		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(id));
-		this.content.update(itemUri, values, null, null);
+		context.getContentResolver().update(itemUri, values, null, null);
 	}
 
 }
