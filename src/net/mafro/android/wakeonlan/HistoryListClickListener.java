@@ -32,7 +32,7 @@ package net.mafro.android.wakeonlan;
  * @desc	HistoryListClickListener defines the interface for an object that
  * 				listens to onClick events on the HistoryList
  */
-interface HistoryListClickListener {
+public interface HistoryListClickListener {
 
 	void onClick(HistoryItem item);
 

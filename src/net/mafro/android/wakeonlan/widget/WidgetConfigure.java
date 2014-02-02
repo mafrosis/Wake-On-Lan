@@ -26,7 +26,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package net.mafro.android.wakeonlan;
+package net.mafro.android.wakeonlan.widget;
 
 import android.os.Bundle;
 
@@ -42,6 +42,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import android.widget.ListView;
+
+import net.mafro.android.wakeonlan.database.Definitions;
+
+import net.mafro.android.wakeonlan.HistoryItem;
+import net.mafro.android.wakeonlan.HistoryListClickListener;
+import net.mafro.android.wakeonlan.HistoryListHandler;
+import net.mafro.android.wakeonlan.R;
+import net.mafro.android.wakeonlan.WakeOnLanActivity;
+
 
 /**
  * @desc	This class is used to configure the home screen widget
@@ -88,9 +97,9 @@ public class WidgetConfigure extends Activity
 	{
 		// save widget_id against the History item in our DB
 		ContentValues values = new ContentValues(1);
-		values.put(History.Items.WIDGET_ID, widget_id);
+		values.put(Definitions.Items.WIDGET_ID, widget_id);
 
-		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(item.id));
+		Uri itemUri = Uri.withAppendedPath(Definitions.Items.CONTENT_URI, Integer.toString(item.id));
 		getContentResolver().update(itemUri, values, null, null);
 
 		// configure the widget

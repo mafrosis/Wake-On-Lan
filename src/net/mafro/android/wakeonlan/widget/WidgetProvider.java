@@ -26,7 +26,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package net.mafro.android.wakeonlan;
+package net.mafro.android.wakeonlan.widget;
 
 import android.os.Bundle;
 
@@ -47,10 +47,18 @@ import android.widget.RemoteViews;
 
 import android.util.Log;
 
-/**
- * @desc	This class is used to setup the home screen widget, as well as handle click events
- */
+import net.mafro.android.wakeonlan.database.Definitions;
 
+import net.mafro.android.wakeonlan.adapter.HistoryAdapter;
+import net.mafro.android.wakeonlan.HistoryItem;
+import net.mafro.android.wakeonlan.HistoryListHandler;
+import net.mafro.android.wakeonlan.R;
+import net.mafro.android.wakeonlan.WakeOnLanActivity;
+
+
+/**
+ * @desc	Setup and handle one-click WOL from widgets on the homescreen
+ */
 public class WidgetProvider extends AppWidgetProvider
 {
 
@@ -153,16 +161,16 @@ public class WidgetProvider extends AppWidgetProvider
 
 		// update widget_id to zero on History table
 		ContentValues values = new ContentValues(1);
-		values.put(History.Items.WIDGET_ID, 0);
+		values.put(Definitions.Items.WIDGET_ID, 0);
 
-		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(item.id));
+		Uri itemUri = Uri.withAppendedPath(Definitions.Items.CONTENT_URI, Integer.toString(item.id));
 		context.getContentResolver().update(itemUri, values, null, null);
 	}
 
 	private HistoryItem loadHistoryItem(Context context, int widget_id)
 	{
 		// load History cursor via custom ResourceAdapter
-		Cursor cursor = context.getContentResolver().query(History.Items.CONTENT_URI, HistoryListHandler.PROJECTION, null, null, null);
+		Cursor cursor = context.getContentResolver().query(Definitions.Items.CONTENT_URI, HistoryListHandler.PROJECTION, null, null, null);
 		HistoryAdapter adapter = new HistoryAdapter(context, cursor, false);
 
 		while(cursor.moveToNext()) {

@@ -26,7 +26,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package net.mafro.android.wakeonlan;
+package net.mafro.android.wakeonlan.database;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -81,16 +81,16 @@ public class HistoryProvider extends ContentProvider {
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("CREATE TABLE history ("
-					+ History.Items._ID + " INTEGER PRIMARY KEY,"
-					+ History.Items.TITLE + " TEXT,"
-					+ History.Items.MAC + " TEXT,"
-					+ History.Items.IP + " TEXT,"
-					+ History.Items.PORT + " INTEGER,"
-					+ History.Items.CREATED_DATE + " INTEGER,"
-					+ History.Items.LAST_USED_DATE + " INTEGER,"
-					+ History.Items.USED_COUNT + " INTEGER DEFAULT 1,"
-					+ History.Items.IS_STARRED + " INTEGER DEFAULT 0,"
-					+ History.Items.WIDGET_ID + " INTEGER DEFAULT 0"
+					+ Definitions.Items._ID + " INTEGER PRIMARY KEY,"
+					+ Definitions.Items.TITLE + " TEXT,"
+					+ Definitions.Items.MAC + " TEXT,"
+					+ Definitions.Items.IP + " TEXT,"
+					+ Definitions.Items.PORT + " INTEGER,"
+					+ Definitions.Items.CREATED_DATE + " INTEGER,"
+					+ Definitions.Items.LAST_USED_DATE + " INTEGER,"
+					+ Definitions.Items.USED_COUNT + " INTEGER DEFAULT 1,"
+					+ Definitions.Items.IS_STARRED + " INTEGER DEFAULT 0,"
+					+ Definitions.Items.WIDGET_ID + " INTEGER DEFAULT 0"
 					+ ");");
 		}
 
@@ -98,17 +98,17 @@ public class HistoryProvider extends ContentProvider {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			if(oldVersion == 1) {
 				// upgrade from v1 to v2
-				db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.USED_COUNT + " INTEGER DEFAULT 1;");
-				db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.IS_STARRED + " INTEGER DEFAULT 0;");
+				db.execSQL("ALTER TABLE history ADD COLUMN " + Definitions.Items.USED_COUNT + " INTEGER DEFAULT 1;");
+				db.execSQL("ALTER TABLE history ADD COLUMN " + Definitions.Items.IS_STARRED + " INTEGER DEFAULT 0;");
 
 				// extra command for upgrade to v3
 				if(newVersion == 3) {
-					db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.WIDGET_ID + " INTEGER DEFAULT 0;");
+					db.execSQL("ALTER TABLE history ADD COLUMN " + Definitions.Items.WIDGET_ID + " INTEGER DEFAULT 0;");
 				}
 
 			}else if(oldVersion == 2) {
 				// upgrade to v3
-				db.execSQL("ALTER TABLE history ADD COLUMN " + History.Items.WIDGET_ID + " INTEGER DEFAULT 0;");
+				db.execSQL("ALTER TABLE history ADD COLUMN " + Definitions.Items.WIDGET_ID + " INTEGER DEFAULT 0;");
 			}
 		}
 	}
@@ -130,7 +130,7 @@ public class HistoryProvider extends ContentProvider {
 		// if no sort order is specified use the default
 		String orderBy;
 		if(TextUtils.isEmpty(sortOrder)) {
-			orderBy = History.Items.DEFAULT_SORT_ORDER;
+			orderBy = Definitions.Items.DEFAULT_SORT_ORDER;
 		}else{
 			orderBy = sortOrder;
 		}
@@ -148,10 +148,10 @@ public class HistoryProvider extends ContentProvider {
 	public String getType(Uri uri) {
 		switch (sUriMatcher.match(uri)) {
 			case HISTORY:
-				return History.Items.CONTENT_TYPE;
+				return Definitions.Items.CONTENT_TYPE;
 
 			case HISTORY_ID:
-				return History.Items.CONTENT_ITEM_TYPE;
+				return Definitions.Items.CONTENT_ITEM_TYPE;
 
 			default:
 				throw new IllegalArgumentException("Unknown URI " + uri);
@@ -175,31 +175,31 @@ public class HistoryProvider extends ContentProvider {
 		Long now = Long.valueOf(System.currentTimeMillis());
 
 		// make sure that the fields are all set
-		if(values.containsKey(History.Items.TITLE) == false) {
-			values.put(History.Items.TITLE, "");
+		if(values.containsKey(Definitions.Items.TITLE) == false) {
+			values.put(Definitions.Items.TITLE, "");
 		}
-		if(values.containsKey(History.Items.MAC) == false) {
-			values.put(History.Items.MAC, "");
+		if(values.containsKey(Definitions.Items.MAC) == false) {
+			values.put(Definitions.Items.MAC, "");
 		}
-		if(values.containsKey(History.Items.IP) == false) {
-			values.put(History.Items.IP, "");
+		if(values.containsKey(Definitions.Items.IP) == false) {
+			values.put(Definitions.Items.IP, "");
 		}
-		if(values.containsKey(History.Items.PORT) == false) {
-			values.put(History.Items.PORT, "");
+		if(values.containsKey(Definitions.Items.PORT) == false) {
+			values.put(Definitions.Items.PORT, "");
 		}
-		if(values.containsKey(History.Items.CREATED_DATE) == false) {
-			values.put(History.Items.CREATED_DATE, now);
+		if(values.containsKey(Definitions.Items.CREATED_DATE) == false) {
+			values.put(Definitions.Items.CREATED_DATE, now);
 		}
-		if(values.containsKey(History.Items.LAST_USED_DATE) == false) {
-			values.put(History.Items.LAST_USED_DATE, now);
+		if(values.containsKey(Definitions.Items.LAST_USED_DATE) == false) {
+			values.put(Definitions.Items.LAST_USED_DATE, now);
 		}
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
 		// insert record, 2nd param is NULLABLE field for if values is empty
-		long rowId = db.insert(HISTORY_TABLE_NAME, History.Items.MAC, values);
+		long rowId = db.insert(HISTORY_TABLE_NAME, Definitions.Items.MAC, values);
 		if(rowId > 0) {
-			Uri histUri = ContentUris.withAppendedId(History.Items.CONTENT_URI, rowId);
+			Uri histUri = ContentUris.withAppendedId(Definitions.Items.CONTENT_URI, rowId);
 			getContext().getContentResolver().notifyChange(histUri, null);
 			return histUri;
 		}
@@ -218,7 +218,7 @@ public class HistoryProvider extends ContentProvider {
 
 			case HISTORY_ID:
 				String histId = uri.getPathSegments().get(1);
-				count = db.delete(HISTORY_TABLE_NAME, History.Items._ID + "=" + histId
+				count = db.delete(HISTORY_TABLE_NAME, Definitions.Items._ID + "=" + histId
 						+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 				break;
 
@@ -242,7 +242,7 @@ public class HistoryProvider extends ContentProvider {
 
 			case HISTORY_ID:
 				String historyId = uri.getPathSegments().get(1);
-				count = db.update(HISTORY_TABLE_NAME, values, History.Items._ID + "=" + historyId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+				count = db.update(HISTORY_TABLE_NAME, values, Definitions.Items._ID + "=" + historyId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 				break;
 
 			default:
@@ -255,20 +255,20 @@ public class HistoryProvider extends ContentProvider {
 
 	static {
 		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		sUriMatcher.addURI(History.AUTHORITY, "history", HISTORY);
-		sUriMatcher.addURI(History.AUTHORITY, "history/#", HISTORY_ID);
+		sUriMatcher.addURI(Definitions.AUTHORITY, "history", HISTORY);
+		sUriMatcher.addURI(Definitions.AUTHORITY, "history/#", HISTORY_ID);
 
 		sHistoryProjectionMap = new HashMap<String, String>();
-		sHistoryProjectionMap.put(History.Items._ID, History.Items._ID);
-		sHistoryProjectionMap.put(History.Items.TITLE, History.Items.TITLE);
-		sHistoryProjectionMap.put(History.Items.MAC, History.Items.MAC);
-		sHistoryProjectionMap.put(History.Items.IP, History.Items.IP);
-		sHistoryProjectionMap.put(History.Items.PORT, History.Items.PORT);
-		sHistoryProjectionMap.put(History.Items.CREATED_DATE, History.Items.CREATED_DATE);
-		sHistoryProjectionMap.put(History.Items.LAST_USED_DATE, History.Items.LAST_USED_DATE);
-		sHistoryProjectionMap.put(History.Items.USED_COUNT, History.Items.USED_COUNT);
-		sHistoryProjectionMap.put(History.Items.IS_STARRED, History.Items.IS_STARRED);
-		sHistoryProjectionMap.put(History.Items.WIDGET_ID, History.Items.WIDGET_ID);
+		sHistoryProjectionMap.put(Definitions.Items._ID, Definitions.Items._ID);
+		sHistoryProjectionMap.put(Definitions.Items.TITLE, Definitions.Items.TITLE);
+		sHistoryProjectionMap.put(Definitions.Items.MAC, Definitions.Items.MAC);
+		sHistoryProjectionMap.put(Definitions.Items.IP, Definitions.Items.IP);
+		sHistoryProjectionMap.put(Definitions.Items.PORT, Definitions.Items.PORT);
+		sHistoryProjectionMap.put(Definitions.Items.CREATED_DATE, Definitions.Items.CREATED_DATE);
+		sHistoryProjectionMap.put(Definitions.Items.LAST_USED_DATE, Definitions.Items.LAST_USED_DATE);
+		sHistoryProjectionMap.put(Definitions.Items.USED_COUNT, Definitions.Items.USED_COUNT);
+		sHistoryProjectionMap.put(Definitions.Items.IS_STARRED, Definitions.Items.IS_STARRED);
+		sHistoryProjectionMap.put(Definitions.Items.WIDGET_ID, Definitions.Items.WIDGET_ID);
 	}
 
 }

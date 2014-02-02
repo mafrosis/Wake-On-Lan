@@ -60,6 +60,9 @@ import android.view.MenuItem;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
 
+import net.mafro.android.wakeonlan.database.Definitions;
+import net.mafro.android.wakeonlan.wol.MagicPacket;
+
 
 /**
  *	@desc	Base activity, handles all UI events except history ListView clicks
@@ -87,14 +90,14 @@ public class WakeOnLanActivity extends Activity implements OnClickListener, OnTa
 
 	private static final String[] PROJECTION = new String[]
 	{
-		History.Items._ID,
-		History.Items.TITLE,
-		History.Items.MAC,
-		History.Items.IP,
-		History.Items.PORT,
-		History.Items.LAST_USED_DATE,
-		History.Items.USED_COUNT,
-		History.Items.IS_STARRED
+		Definitions.Items._ID,
+		Definitions.Items.TITLE,
+		Definitions.Items.MAC,
+		Definitions.Items.IP,
+		Definitions.Items.PORT,
+		Definitions.Items.LAST_USED_DATE,
+		Definitions.Items.USED_COUNT,
+		Definitions.Items.IS_STARRED
 	};
 
 	private static Toast notification;

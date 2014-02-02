@@ -47,6 +47,9 @@ import android.net.Uri;
 import java.util.List;
 import java.util.ArrayList;
 
+import net.mafro.android.wakeonlan.adapter.HistoryAdapter;
+import net.mafro.android.wakeonlan.database.Definitions;
+
 
 /**
  *	@desc	Class handles all functions of the history ListView
@@ -64,15 +67,15 @@ public class HistoryListHandler implements OnItemClickListener
 
 	public static final String[] PROJECTION = new String[]
 	{
-		History.Items._ID,
-		History.Items.TITLE,
-		History.Items.MAC,
-		History.Items.IP,
-		History.Items.PORT,
-		History.Items.LAST_USED_DATE,
-		History.Items.USED_COUNT,
-		History.Items.IS_STARRED,
-		History.Items.WIDGET_ID
+		Definitions.Items._ID,
+		Definitions.Items.TITLE,
+		Definitions.Items.MAC,
+		Definitions.Items.IP,
+		Definitions.Items.PORT,
+		Definitions.Items.LAST_USED_DATE,
+		Definitions.Items.USED_COUNT,
+		Definitions.Items.IS_STARRED,
+		Definitions.Items.WIDGET_ID
 	};
 
 	private ListView view = null;
@@ -90,13 +93,13 @@ public class HistoryListHandler implements OnItemClickListener
 		String orderBy = null;
 		switch (sort_mode) {
 			case WakeOnLanActivity.CREATED:
-				orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.CREATED_DATE+" DESC";
+				orderBy = Definitions.Items.IS_STARRED+" DESC, "+Definitions.Items.CREATED_DATE+" DESC";
 				break;
 			case WakeOnLanActivity.LAST_USED:
-				orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.LAST_USED_DATE+" DESC";
+				orderBy = Definitions.Items.IS_STARRED+" DESC, "+Definitions.Items.LAST_USED_DATE+" DESC";
 				break;
 			case WakeOnLanActivity.USED_COUNT:
-				orderBy = History.Items.IS_STARRED+" DESC, "+History.Items.USED_COUNT+" DESC";
+				orderBy = Definitions.Items.IS_STARRED+" DESC, "+Definitions.Items.USED_COUNT+" DESC";
 				break;
 		}
 
@@ -107,7 +110,7 @@ public class HistoryListHandler implements OnItemClickListener
 		}
 
 		// load History cursor via custom ResourceAdapter
-		cursor = parent.getContentResolver().query(History.Items.CONTENT_URI, PROJECTION, null, null, orderBy);
+		cursor = parent.getContentResolver().query(Definitions.Items.CONTENT_URI, PROJECTION, null, null, orderBy);
 		adapter = new HistoryAdapter(parent, cursor, showStars);
 
 		// register self as listener for item clicks
@@ -140,12 +143,12 @@ public class HistoryListHandler implements OnItemClickListener
 	public static HistoryItem getItem(Cursor cursor)
 	{
 		return new HistoryItem(
-			cursor.getInt(cursor.getColumnIndex(History.Items._ID)),
-			cursor.getString(cursor.getColumnIndex(History.Items.TITLE)),
-			cursor.getString(cursor.getColumnIndex(History.Items.MAC)),
-			cursor.getString(cursor.getColumnIndex(History.Items.IP)),
-			cursor.getInt(cursor.getColumnIndex(History.Items.PORT)),
-			cursor.getInt(cursor.getColumnIndex(History.Items.WIDGET_ID))
+			cursor.getInt(cursor.getColumnIndex(Definitions.Items._ID)),
+			cursor.getString(cursor.getColumnIndex(Definitions.Items.TITLE)),
+			cursor.getString(cursor.getColumnIndex(Definitions.Items.MAC)),
+			cursor.getString(cursor.getColumnIndex(Definitions.Items.IP)),
+			cursor.getInt(cursor.getColumnIndex(Definitions.Items.PORT)),
+			cursor.getInt(cursor.getColumnIndex(Definitions.Items.WIDGET_ID))
 		);
 	}
 
@@ -155,9 +158,9 @@ public class HistoryListHandler implements OnItemClickListener
 
 		// don't allow duplicates in history list
 		if(cursor.moveToFirst()) {
-			int macColumn = cursor.getColumnIndex(History.Items.MAC);
-			int ipColumn = cursor.getColumnIndex(History.Items.IP);
-			int portColumn = cursor.getColumnIndex(History.Items.PORT);
+			int macColumn = cursor.getColumnIndex(Definitions.Items.MAC);
+			int ipColumn = cursor.getColumnIndex(Definitions.Items.IP);
+			int portColumn = cursor.getColumnIndex(Definitions.Items.PORT);
 
 			do {
 				if(mac.equals(cursor.getString(macColumn)) && ip.equals(cursor.getString(ipColumn)) && (port == cursor.getInt(portColumn))) {
@@ -170,42 +173,42 @@ public class HistoryListHandler implements OnItemClickListener
 		// create only if the item doesn't exist
 		if(exists == false) {
 			ContentValues values = new ContentValues(4);
-			values.put(History.Items.TITLE, title);
-			values.put(History.Items.MAC, mac);
-			values.put(History.Items.IP, ip);
-			values.put(History.Items.PORT, port);
-			this.parent.getContentResolver().insert(History.Items.CONTENT_URI, values);
+			values.put(Definitions.Items.TITLE, title);
+			values.put(Definitions.Items.MAC, mac);
+			values.put(Definitions.Items.IP, ip);
+			values.put(Definitions.Items.PORT, port);
+			this.parent.getContentResolver().insert(Definitions.Items.CONTENT_URI, values);
 		}
 	}
 
 	public void updateHistory(int id, String title, String mac, String ip, int port)
 	{
 		ContentValues values = new ContentValues(4);
-		values.put(History.Items.TITLE, title);
-		values.put(History.Items.MAC, mac);
-		values.put(History.Items.IP, ip);
-		values.put(History.Items.PORT, port);
+		values.put(Definitions.Items.TITLE, title);
+		values.put(Definitions.Items.MAC, mac);
+		values.put(Definitions.Items.IP, ip);
+		values.put(Definitions.Items.PORT, port);
 
-		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(id));
+		Uri itemUri = Uri.withAppendedPath(Definitions.Items.CONTENT_URI, Integer.toString(id));
 		this.parent.getContentResolver().update(itemUri, values, null, null);
 	}
 
 	public void incrementHistory(long id)
 	{
-		int usedCount = cursor.getInt(cursor.getColumnIndex(History.Items.USED_COUNT));
+		int usedCount = cursor.getInt(cursor.getColumnIndex(Definitions.Items.USED_COUNT));
 
 		ContentValues values = new ContentValues(2);
-		values.put(History.Items.USED_COUNT, usedCount+1);
-		values.put(History.Items.LAST_USED_DATE, Long.valueOf(System.currentTimeMillis()));
+		values.put(Definitions.Items.USED_COUNT, usedCount+1);
+		values.put(Definitions.Items.LAST_USED_DATE, Long.valueOf(System.currentTimeMillis()));
 
-		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Long.toString(id));
+		Uri itemUri = Uri.withAppendedPath(Definitions.Items.CONTENT_URI, Long.toString(id));
 		this.parent.getContentResolver().update(itemUri, values, null, null);
 	}
 
 	public void deleteHistory(int id)
 	{
 		// use HistoryProvider to remove this row
-		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(id));
+		Uri itemUri = Uri.withAppendedPath(Definitions.Items.CONTENT_URI, Integer.toString(id));
 		this.parent.getContentResolver().delete(itemUri, null, null);
 	}
 
