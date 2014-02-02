@@ -28,21 +28,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package net.mafro.android.wakeonlan;
 
+import android.os.Bundle;
+
 import android.app.Activity;
-import android.app.PendingIntent;
 
 import android.appwidget.AppWidgetManager;
 
-import android.os.Bundle;
+import android.net.Uri;
 
-import android.view.View;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.Context;
 
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RemoteViews;
 
 /**
  * @desc	This class is used to configure the home screen widget
@@ -62,7 +61,7 @@ public class WidgetConfigure extends Activity
 	{
 		super.onCreate(savedInstanceState);
 
-		// Set the result to CANCELED.  This will cause the widget host to cancel
+		// Set the result to CANCELED. This will cause the widget host to cancel
 		// out of the widget placement if they press the back button.
 		setResult(RESULT_CANCELED);
 
@@ -81,23 +80,21 @@ public class WidgetConfigure extends Activity
 			}
 		});
 
-		// get the widget id
-		Intent intent = getIntent();
-		widget_id = WidgetProvider.getWidgetId(intent);
-
-		if(widget_id == AppWidgetManager.INVALID_APPWIDGET_ID) {
-			// no valid widget id; bailing
-			finish();
-		}
+		// get the widget_id from the Intent
+		this.widget_id = getIntent().getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 	}
 
 	private void selected(HistoryItem item)
 	{
-		// save selected item id to the settings.
-		WidgetProvider.saveItemPref(settings, item, widget_id);	
+		// save widget_id against the History item in our DB
+		ContentValues values = new ContentValues(1);
+		values.put(History.Items.WIDGET_ID, widget_id);
+
+		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(item.id));
+		getContentResolver().update(itemUri, values, null, null);
 
 		// configure the widget
-		WidgetProvider.configureWidget(widget_id, item, this);
+		WidgetProvider.configureWidget(widget_id, item.title, this);
 
 		Intent resultValue = new Intent();
 		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widget_id);

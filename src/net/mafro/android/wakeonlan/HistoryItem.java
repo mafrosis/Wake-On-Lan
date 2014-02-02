@@ -52,4 +52,15 @@ public class HistoryItem
 		this.port = port;
 		this.widget_id = widget_id;
 	}
+
+	public HistoryItem(Cursor cursor)
+	{
+		this.id = cursor.getInt(cursor.getColumnIndex(History.Items._ID));
+		this.title = cursor.getString(cursor.getColumnIndex(History.Items.TITLE));
+		this.mac = cursor.getString(cursor.getColumnIndex(History.Items.MAC));
+		this.ip = cursor.getString(cursor.getColumnIndex(History.Items.IP));
+		this.port = cursor.getInt(cursor.getColumnIndex(History.Items.PORT));
+		this.widget_id = cursor.getInt(cursor.getColumnIndex(History.Items.WIDGET_ID));
+	}
+
 }
