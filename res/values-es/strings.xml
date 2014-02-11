@@ -1,0 +1,27 @@
++<?xml version="1.0" encoding="utf-8"?>
+ +<resources>
+ +	<string name="app_name">Wake On Lan</string>
+ +	<string name="app_desc">Una aplicación Wake On Lan simple. Almacena el historial de paquetes enviados para guardar las direcciones MAC.</string>
+ +	<string name="button_wake">Enviar un paquete Wake</string>
+ +	<string name="button_save">Guardar &amp; Terminar de editar</string>
+ +	<string name="button_clear">Limpiar formulario</string>
+ +	<string name="button_cancel">Cancelar edición</string>
+ +	<string name="tab_history">Historial</string>
+ +	<string name="tab_wake">Wake</string>
+ +	<string name="title_history">Historial</string>
+ +	<string name="title_wake">Wake</string>
+ +	<string name="title">Referencia</string>
+ +	<string name="mac">Dirección MAC</string>
+ +	<string name="ip">Nombre de Host / Dirección IP</string>
+ +	<string name="port">Puerto</string>
+ +	<string name="menu_wake">Enviar paquete Wake</string>
+ +	<string name="menu_edit">Editar</string>
+ +	<string name="menu_delete">Eliminar</string>
+ +	<string name="menu_sortby">Mostrar por</string>
+ +	<string name="menu_lastused">Reciente</string>
+ +	<string name="menu_usedcount">Frecuente</string>
+ +	<string name="menu_created">Creado</string>
+ +	<string name="invalid_mac">MAC Address no válida</string>
+ +	<string name="send_failed">Ha fallado el envío</string>
+ +	<string name="packet_sent">Enviado el Paquete Mágico</string>
+ +</resources>
