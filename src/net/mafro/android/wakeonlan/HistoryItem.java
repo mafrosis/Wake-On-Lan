@@ -30,6 +30,8 @@ package net.mafro.android.wakeonlan;
 
 import android.database.Cursor;
 
+import net.mafro.android.wakeonlan.database.Definitions;
+
 
 /**
  *	@desc	Convenience class for passing history entries around the application
@@ -41,13 +43,26 @@ public class HistoryItem
 	public String mac;
 	public String ip;
 	public int port;
+	public int widget_id;
 
-	public HistoryItem(int id, String title, String mac, String ip, int port)
+	public HistoryItem(int id, String title, String mac, String ip, int port, int widget_id)
 	{
 		this.id = id;
 		this.title = title;
 		this.mac = mac;
 		this.ip = ip;
 		this.port = port;
+		this.widget_id = widget_id;
 	}
+
+	public HistoryItem(Cursor cursor)
+	{
+		this.id = cursor.getInt(cursor.getColumnIndex(Definitions.Items._ID));
+		this.title = cursor.getString(cursor.getColumnIndex(Definitions.Items.TITLE));
+		this.mac = cursor.getString(cursor.getColumnIndex(Definitions.Items.MAC));
+		this.ip = cursor.getString(cursor.getColumnIndex(Definitions.Items.IP));
+		this.port = cursor.getInt(cursor.getColumnIndex(Definitions.Items.PORT));
+		this.widget_id = cursor.getInt(cursor.getColumnIndex(Definitions.Items.WIDGET_ID));
+	}
+
 }

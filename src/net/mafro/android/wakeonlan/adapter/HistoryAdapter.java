@@ -26,16 +26,14 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package net.mafro.android.wakeonlan;
+package net.mafro.android.wakeonlan.adapter;
 
 import android.os.Bundle;
 
 import android.content.Context;
-import android.content.ContentResolver;
+import android.content.ContentValues;
 
 import android.database.Cursor;
-
-import android.content.ContentValues;
 
 import android.net.Uri;
 
@@ -53,6 +51,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import net.mafro.android.widget.StarButton;
 
+import net.mafro.android.wakeonlan.database.Definitions;
+import net.mafro.android.wakeonlan.R;
+
 
 /**
  *	@desc	Custom adapter to aid in UI binding
@@ -63,7 +64,6 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 	private static final String TAG = "HistoryAdapter";
 
 	private Context context;
-	private ContentResolver content;
 
 	boolean showStars;
 
@@ -72,7 +72,6 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 	{
 		super(context, R.layout.history_row, cursor);
 		this.context = context;
-		this.content = context.getContentResolver();
 		this.showStars = showStars;
 	}
 
@@ -81,12 +80,12 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 	public void bindView(View view, Context context, Cursor cursor)
 	{
 		// load our column indexes
-		int idColumn = cursor.getColumnIndex(History.Items._ID);
-		int titleColumn = cursor.getColumnIndex(History.Items.TITLE);
-		int macColumn = cursor.getColumnIndex(History.Items.MAC);
-		int ipColumn = cursor.getColumnIndex(History.Items.IP);
-		int portColumn = cursor.getColumnIndex(History.Items.PORT);
-		int isStarredColumn = cursor.getColumnIndex(History.Items.IS_STARRED);
+		int idColumn = cursor.getColumnIndex(Definitions.Items._ID);
+		int titleColumn = cursor.getColumnIndex(Definitions.Items.TITLE);
+		int macColumn = cursor.getColumnIndex(Definitions.Items.MAC);
+		int ipColumn = cursor.getColumnIndex(Definitions.Items.IP);
+		int portColumn = cursor.getColumnIndex(Definitions.Items.PORT);
+		int isStarredColumn = cursor.getColumnIndex(Definitions.Items.IS_STARRED);
 
 		TextView vtitle = (TextView) view.findViewById(R.id.history_row_title);
 		TextView vmac = (TextView) view.findViewById(R.id.history_row_mac);
@@ -139,10 +138,10 @@ public class HistoryAdapter extends ResourceCursorAdapter implements OnCheckedCh
 	private void setIsStarred(int id, int value) {
 		// update history setting is_starred to value
 		ContentValues values = new ContentValues(1);
-		values.put(History.Items.IS_STARRED, value);
+		values.put(Definitions.Items.IS_STARRED, value);
 
-		Uri itemUri = Uri.withAppendedPath(History.Items.CONTENT_URI, Integer.toString(id));
-		this.content.update(itemUri, values, null, null);
+		Uri itemUri = Uri.withAppendedPath(Definitions.Items.CONTENT_URI, Integer.toString(id));
+		context.getContentResolver().update(itemUri, values, null, null);
 	}
 
 }

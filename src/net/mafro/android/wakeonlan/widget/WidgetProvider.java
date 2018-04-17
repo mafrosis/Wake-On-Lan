@@ -26,58 +26,65 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package net.mafro.android.wakeonlan;
+package net.mafro.android.wakeonlan.widget;
+
+import android.os.Bundle;
 
 import android.app.PendingIntent;
 
 import android.database.Cursor;
+
+import android.net.Uri;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 
 import android.content.Intent;
 import android.content.Context;
-import android.content.SharedPreferences;
-
-import android.os.Bundle;
+import android.content.ContentValues;
 
 import android.widget.RemoteViews;
+
 import android.util.Log;
 
-/**
- * @desc	This class is used to setup the home screen widget, as well as handle click events
- */
+import net.mafro.android.wakeonlan.database.Definitions;
 
+import net.mafro.android.wakeonlan.adapter.HistoryAdapter;
+import net.mafro.android.wakeonlan.HistoryItem;
+import net.mafro.android.wakeonlan.HistoryListHandler;
+import net.mafro.android.wakeonlan.R;
+import net.mafro.android.wakeonlan.WakeOnLanActivity;
+
+
+/**
+ * @desc	Setup and handle one-click WOL from widgets on the homescreen
+ */
 public class WidgetProvider extends AppWidgetProvider
 {
 
 	public static final String TAG = "WidgetProvider";
 
-	public static final String SETTINGS_PREFIX = "widget_";
 	public static final String WIDGET_ONCLICK = "net.mafro.android.wakeonlan.WidgetOnClick";
 
 	/**
-	 * @desc	this method is called once when the WidgetHost starts (usually when the OS boots).
+	 * @desc	this method is called when the widgets need to be drawn
 	 */
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 
-		SharedPreferences settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
-
 		final int N = appWidgetIds.length;
 		for(int i=0; i<N; i++) {
 			int widget_id = appWidgetIds[i];
 
-			HistoryItem item = loadItemPref(context, settings, widget_id);
+			HistoryItem item = loadHistoryItem(context, widget_id);
+
+			// do nothing for widgets which point to a missing HistoryItem
 			if(item == null) {
-				// item or prefrences missing.
-				// TODO delete the widget probably (cant find a way to do this).
-				// maybe set the title of the widget to ERROR
-				continue;
+				return;
 			}
-			configureWidget(widget_id, item, context);
+			configureWidget(widget_id, item.title, context);
 		}
 	}
 
@@ -87,16 +94,18 @@ public class WidgetProvider extends AppWidgetProvider
 		super.onReceive(context, intent);
 
 		if(intent.getAction().startsWith(WIDGET_ONCLICK)) {
-			SharedPreferences settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
-
-			// get the widget id
-			int widget_id = getWidgetId(intent);
-			if(widget_id == AppWidgetManager.INVALID_APPWIDGET_ID) {
-				return;
-			}
+			// get the widget_id from the Intent
+			int widget_id = intent.getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
 			// get the HistoryItem associated with the widget_id
-			HistoryItem item = loadItemPref(context, settings, widget_id);
+			HistoryItem item = loadHistoryItem(context, widget_id);
+
+			if(item == null) {
+				// this can only happen if a user clears all app data via settings
+				// update the HistoryItem to be widget_id = 0, so it's removed on the next AppWidgetManager update
+				configureWidget(widget_id, "", context);
+				return;
+			}
 
 			// send the packet
 			WakeOnLanActivity.sendPacket(context, item.title, item.mac, item.ip, item.port);
@@ -108,35 +117,20 @@ public class WidgetProvider extends AppWidgetProvider
 	{
 		super.onDeleted(context, id);
 
-		SharedPreferences settings = context.getSharedPreferences(WakeOnLanActivity.TAG, 0);
-
 		final int N = id.length;
 		for(int i=0; i<N; i++) {
-			deleteItemPref(settings, id[i]);
+			deleteHistoryItemWidget(context, id[i]);
 		}
-	}
-
-	/**
-	 * @desc	gets the widget id from an intent
-	 */
-	public static int getWidgetId(Intent intent)
-	{
-		Bundle extras = intent.getExtras();
-		if(extras != null) {
-			return extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-		}
-		return AppWidgetManager.INVALID_APPWIDGET_ID;
 	}
 
 	/**
 	 * @desc	configures a widget for the first time. Usually called when creating a widget
-	 *				for the first time or initialising existing widgets when the AppWidgetManager
-	 *				restarts (usually when the phone reboots).
+	 *				or initialising existing widgets when the device is rebooted.
 	 */
-	public static void configureWidget(int widget_id, HistoryItem item, Context context)
+	public static void configureWidget(int widget_id, String title, Context context)
 	{
 		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-		views.setTextViewText(R.id.appwidget_text, item.title);
+		views.setTextViewText(R.id.appwidget_text, title);
 
 		// append id to action to prevent clearing the extras bundle
 		views.setOnClickPendingIntent(R.id.appwidget_button, getPendingSelfIntent(context, widget_id, WIDGET_ONCLICK + widget_id));
@@ -156,52 +150,38 @@ public class WidgetProvider extends AppWidgetProvider
 		return PendingIntent.getBroadcast(context, 0, intent, 0);
 	}
 
-	/**
-	 * @desc	saves the given history item/widget_id combination
-	 */
-	public static void saveItemPref(SharedPreferences settings, HistoryItem item, int widget_id)
+	public void deleteHistoryItemWidget(Context context, int widget_id)
 	{
-		SharedPreferences.Editor editor = settings.edit();
+		HistoryItem item = loadHistoryItem(context, widget_id);
 
-		// store HistoryItem details in settings
-		editor.putInt(SETTINGS_PREFIX + widget_id, item.id);
-		editor.putString(SETTINGS_PREFIX + widget_id + History.Items.TITLE, item.title);
-		editor.putString(SETTINGS_PREFIX + widget_id + History.Items.MAC, item.mac);
-		editor.putString(SETTINGS_PREFIX + widget_id + History.Items.IP, item.ip);
-		editor.putInt(SETTINGS_PREFIX + widget_id + History.Items.PORT, item.port);
-		editor.commit();
-	}
-
-	public static void deleteItemPref(SharedPreferences settings, int widget_id)
-	{
-		SharedPreferences.Editor editor = settings.edit();
-		editor.remove(SETTINGS_PREFIX + widget_id);
-		editor.remove(SETTINGS_PREFIX + widget_id + History.Items.TITLE);
-		editor.remove(SETTINGS_PREFIX + widget_id + History.Items.MAC);
-		editor.remove(SETTINGS_PREFIX + widget_id + History.Items.IP);
-		editor.remove(SETTINGS_PREFIX + widget_id + History.Items.PORT);
-		editor.commit();
-	}
-
-	/**
-	 * @desc	load the HistoryItem associated with a widget_id
-	 */
-	public static HistoryItem loadItemPref(Context context, SharedPreferences settings, int widget_id)
-	{
-		// get item_id
-		int item_id = settings.getInt(SETTINGS_PREFIX + widget_id, -1);
-
-		if(item_id == -1) {
-			// No item_id found for given widget return null
-			return null;
+		// if back-button pressed during WidgetConfigure, item is null
+		if(item == null) {
+			return;
 		}
 
-		String title = settings.getString(SETTINGS_PREFIX + widget_id + History.Items.TITLE, "");
-		String mac = settings.getString(SETTINGS_PREFIX + widget_id + History.Items.MAC, "");
-		String ip = settings.getString(SETTINGS_PREFIX + widget_id + History.Items.IP, "");
-		int port = settings.getInt(SETTINGS_PREFIX + widget_id + History.Items.PORT, -1);
+		// update widget_id to zero on History table
+		ContentValues values = new ContentValues(1);
+		values.put(Definitions.Items.WIDGET_ID, 0);
 
-		return new HistoryItem(item_id, title, mac, ip, port);
+		Uri itemUri = Uri.withAppendedPath(Definitions.Items.CONTENT_URI, Integer.toString(item.id));
+		context.getContentResolver().update(itemUri, values, null, null);
+	}
+
+	private HistoryItem loadHistoryItem(Context context, int widget_id)
+	{
+		// load History cursor via custom ResourceAdapter
+		Cursor cursor = context.getContentResolver().query(Definitions.Items.CONTENT_URI, HistoryListHandler.PROJECTION, null, null, null);
+		HistoryAdapter adapter = new HistoryAdapter(context, cursor, false);
+
+		while(cursor.moveToNext()) {
+			HistoryItem item = new HistoryItem(cursor);
+			if(item.widget_id == widget_id) {
+				return item;
+			}
+		}
+
+		// this covers widgets which point to deleted HistoryItems
+		return null;
 	}
 
 }

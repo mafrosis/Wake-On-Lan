@@ -26,7 +26,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package net.mafro.android.wakeonlan;
+package net.mafro.android.wakeonlan.database;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -35,10 +35,10 @@ import android.provider.BaseColumns;
 /**
  *	@desc	convenience definitions for HistoryProvider
  */
-public final class History {
+public final class Definitions {
 	public static final String AUTHORITY = "net.mafro.android.wakeonlan.historyprovider";
 
-	private History() {}
+	private Definitions() {}
 
 	public static final class Items implements BaseColumns {
 		private Items() {}
@@ -58,6 +58,7 @@ public final class History {
 		public static final String LAST_USED_DATE = "last_used";
 		public static final String USED_COUNT = "used_count";
 		public static final String IS_STARRED = "is_starred";
+		public static final String WIDGET_ID = "widget_id";
 	}
 
 }
